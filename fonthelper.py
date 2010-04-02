@@ -6,14 +6,21 @@ from PyQt4.QtGui import *
 
 from editor import Ui_MainWindow
 
-class StartQT4(QMainWindow):
-    def __init__(self, parent=None):
+class Window(QWidget):
+    def __init__(self, image_file, parent = None):
         QWidget.__init__(self, parent)
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
- 
+        self.resize(640, 480)
+        self.image = QPixmap(image_file)
+
+    def paintEvent(self, event):
+        paint = QPainter()
+        paint.begin(self)
+        paint.drawPixmap(0, 0, self.image)
+        paint.end()
+
+     
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    myapp = StartQT4()
+    myapp = Window(sys.argv[1])
     myapp.show()
     sys.exit(app.exec_())
