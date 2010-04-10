@@ -91,8 +91,44 @@ class Window(QWidget):
         paint.end()
 
      
+class StartDialog(QWidget):
+    def __init__(self):
+        QWidget.__init__(self)
+        self.resize(512, 200)
+        
+        self.grid = QGridLayout()
+        self.name_edit = QLineEdit('Foobar')
+        self.file_edit = QLineEdit()
+        self.file_button = QPushButton('Browse')
+        self.combo = QComboBox()
+        self.combo.addItem('Regular')
+        self.combo.addItem('Bold')
+        self.combo.addItem('Italic')
+        self.combo.addItem('BoldItalic')
+        
+        self.grid.setSpacing(10)
+        self.grid.addWidget(QLabel('Font name'), 0, 0)
+        self.grid.addWidget(self.name_edit, 0, 1, 1, 2)
+        self.grid.addWidget(QLabel('Type'), 1, 0)
+        self.grid.addWidget(self.combo, 1, 1, 1, 2)
+        self.grid.addWidget(QLabel('Image file'), 2, 0)
+        self.grid.addWidget(self.file_edit, 2, 1)
+        self.grid.addWidget(self.file_button, 2, 2)
+        
+        hbox = QHBoxLayout()
+        start_button = QPushButton('Start')
+        hbox.addWidget(start_button)
+        quit_button = QPushButton('Quit')
+        hbox.addWidget(quit_button)
+        w = QWidget()
+        w.setLayout(hbox)
+        self.grid.addWidget(w, 3, 0, 1, 3)
+        
+        self.setLayout(self.grid)
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    myapp = Window(sys.argv[1])
+    #myapp = Window(sys.argv[1])
+    myapp = StartDialog()
     myapp.show()
     sys.exit(app.exec_())
