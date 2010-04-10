@@ -223,14 +223,27 @@ def potrace_image(filename):
     p = subprocess.Popen('potrace -c --eps -q ' + filename + ' -o -', shell=True, stdout=subprocess.PIPE)
     (so, se) = p.communicate()
     lines = so.split('\n')
-    while not lines[0].endswith('setgray'):
+    while not lines[0].endswith('moveto'):
         lines.pop(0)
-    while not lines[-1].endswith('fill'):
+    while not lines[-1].endswith('closepath'):
         lines.pop()
-    lines = lines[1:-1]
-    points = parse_postscript(lines)
-    print points
+    pointset = parse_postscript(lines)
+    pointset = map(convert_points, pointset)
+    print pointset
 
+def convert_points(pointlist):
+    starting_point = pointlist.pop(0)
+    converted = [starting_point]
+    pointlist.reverse()
+    current_point = starting_point
+    for p in pointlist:
+        newp = []
+        for i in range(len(p)/2):
+            current_point = [current_point[0] - p[i*2], current_point[1] - p[i*2+1]]
+            p[i*2] = current_point[0]
+            p[i*2+1] = current_point[1]
+        converted.append(p)
+    return converted
 
 if __name__ == "__main__":
     #start_program()
