@@ -190,20 +190,24 @@ def integerise(command_line):
     
 
 def parse_postscript(commands):
+    point_sets = []
     points = []
     assert(commands[0].endswith('moveto'))
     for cmd in commands:
         if cmd.endswith('moveto'):
+            assert(len(points) == 0)
             points.append(integerise(cmd))
         elif cmd.endswith('rcurveto'):
             points.append(integerise(cmd))
         elif cmd.endswith('rlineto'):
             points.append(integerise(cmd))
         elif cmd.endswith('closepath'):
-            points.append(integerise(cmd))
+            point_sets.append(points)
+            points = []
         else:
             raise RuntimeError('Unknown PostScript command: ' + cmd)
-    return points
+    assert(len(points) == 0)
+    return point_sets
 
 def test_potrace():
     image = QImage(sys.argv[1])
@@ -212,7 +216,11 @@ def test_potrace():
     tfile.close()
     if not image.save(tempname):
         print "Danger!"
-    p = subprocess.Popen('potrace -c --eps -q ' + tempname + ' -o -', shell=True, stdout=subprocess.PIPE)
+    potrace_image(tempname)
+    os.unlink(tempname)
+    
+def potrace_image(filename):
+    p = subprocess.Popen('potrace -c --eps -q ' + filename + ' -o -', shell=True, stdout=subprocess.PIPE)
     (so, se) = p.communicate()
     lines = so.split('\n')
     while not lines[0].endswith('setgray'):
@@ -222,7 +230,6 @@ def test_potrace():
     lines = lines[1:-1]
     points = parse_postscript(lines)
     print points
-    os.unlink(tempname)
 
 
 if __name__ == "__main__":
