@@ -185,9 +185,29 @@ def start_program():
     start_dialog.show()
     sys.exit(app.exec_())
 
+def integerise(command_line):
+    return [int(x) for x in command_line.split()[0:-1]]
+    
+
+def parse_postscript(commands):
+    points = []
+    assert(commands[0].endswith('moveto'))
+    for cmd in commands:
+        if cmd.endswith('moveto'):
+            points.append(integerise(cmd))
+        elif cmd.endswith('rcurveto'):
+            points.append(integerise(cmd))
+        elif cmd.endswith('rlineto'):
+            points.append(integerise(cmd))
+        elif cmd.endswith('closepath'):
+            points.append(integerise(cmd))
+        else:
+            raise RuntimeError('Unknown PostScript command: ' + cmd)
+    return points
+
 def test_potrace():
     image = QImage(sys.argv[1])
-    tfile = tempfile.NamedTemporaryFile(suffix='.ppm')
+    tfile = tempfile.NamedTemporaryFile(suffix='.pgm')
     tempname = tfile.name
     tfile.close()
     if not image.save(tempname):
@@ -200,8 +220,8 @@ def test_potrace():
     while not lines[-1].endswith('fill'):
         lines.pop()
     lines = lines[1:-1]
-    for line in lines:
-        print line
+    points = parse_postscript(lines)
+    print points
     os.unlink(tempname)
 
 
