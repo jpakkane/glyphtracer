@@ -4,7 +4,7 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-from editor import Ui_MainWindow
+#from editor import Ui_MainWindow
 
 def calculate_horizontal_cuts(image):
     (w, h) = (image.width(), image.height())
@@ -51,16 +51,20 @@ def calculate_letter_boxes(image, xstrips):
     (w, h) = (image.width(), image.height())
     rotate = QMatrix().rotate(90)
     for xs in xstrips:
-        print xs
         (y0, y1) = xs
         cur_image = image.copy(0, y0, w, y1-y0).transformed(rotate)
-        print "Size", cur_image.width(), cur_image.height()
         ystrips = calculate_cutlines_locations(calculate_horizontal_cuts(cur_image))
         for ys in ystrips:
             (x0, x1) = ys
-            boxes.append(QRect(x0, y0, x1-x0, y1-y0))
+            box = LetterBox(QRect(x0, y0, x1-x0, y1-y0))
+            boxes.append(box)
     return boxes
 
+
+class LetterBox():
+    def __init__(self, rectangle):
+        self.r = rectangle
+        self.taken = False
 
 class Window(QWidget):
     def __init__(self, image_file, parent = None):
@@ -68,8 +72,8 @@ class Window(QWidget):
         self.resize(640, 480)
         self.image = QImage(image_file)
         strips = calculate_horizontal_cuts(self.image)
-        self.hor_lines = calculate_cutlines_locations(strips)
-        self.boxes = calculate_letter_boxes(self.image, self.hor_lines)
+        hor_lines = calculate_cutlines_locations(strips)
+        self.boxes = calculate_letter_boxes(self.image, hor_lines)
 
     def paintEvent(self, event):
         w = self.image.width()
@@ -78,9 +82,12 @@ class Window(QWidget):
         paint.drawImage(0, 0, self.image)
         pen = QPen(Qt.black, 1, Qt.SolidLine)
         paint.setPen(pen)
+        b = QBrush(QColor(0, 0, 0, 127))
         for box in self.boxes:
-            paint.drawRect(box)
-
+            paint.drawRect(box.r)
+            if box.taken:
+                paint.fillRect(box.r, b)
+        #paint.setPen(pen)
         paint.end()
 
      
