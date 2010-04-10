@@ -19,7 +19,7 @@ def evaluate_horizontal_cuts(image):
     
 def calculate_cutlines_locations(sums):
     element_strips = []
-    cutoff = 5
+    cutoff = 0
     
     if sums[0] <= cutoff:
         background_strip = True
@@ -54,12 +54,20 @@ class Window(QWidget):
         self.resize(640, 480)
         self.image = QImage(image_file)
         strips = evaluate_horizontal_cuts(self.image)
-        print calculate_cutlines_locations(strips)
+        self.hor_lines = calculate_cutlines_locations(strips)
 
     def paintEvent(self, event):
+        w = self.image.width()
         paint = QPainter()
         paint.begin(self)
         paint.drawImage(0, 0, self.image)
+        pen = QPen(Qt.black, 1, Qt.SolidLine)
+        paint.setPen(pen)
+        for strip in self.hor_lines:
+            paint.drawLine(0, strip[0], w, strip[0])
+            paint.drawLine(0, strip[1], w, strip[1])
+
+
         paint.end()
 
      
