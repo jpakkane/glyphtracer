@@ -6,6 +6,9 @@ import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+start_dialog = None
+main_win = None
+
 #from editor import Ui_MainWindow
 
 def is_image_file_valid(fname):
@@ -14,7 +17,7 @@ def is_image_file_valid(fname):
         return False
     return True
 
-def calculate_horizontal_cuts(image):
+def calculate_horizontal_sums(image):
     (w, h) = (image.width(), image.height())
     sums = []
     for j in xrange(h):
@@ -61,7 +64,7 @@ def calculate_letter_boxes(image, xstrips):
     for xs in xstrips:
         (y0, y1) = xs
         cur_image = image.copy(0, y0, w, y1-y0).transformed(rotate)
-        ystrips = calculate_cutlines_locations(calculate_horizontal_cuts(cur_image))
+        ystrips = calculate_cutlines_locations(calculate_horizontal_sums(cur_image))
         for ys in ystrips:
             (x0, x1) = ys
             box = LetterBox(QRect(x0, y0, x1-x0, y1-y0))
@@ -79,7 +82,7 @@ class Window(QWidget):
         QWidget.__init__(self, parent)
         self.resize(640, 480)
         self.image = QImage(image_file)
-        strips = calculate_horizontal_cuts(self.image)
+        strips = calculate_horizontal_sums(self.image)
         hor_lines = calculate_cutlines_locations(strips)
         self.boxes = calculate_letter_boxes(self.image, hor_lines)
 
@@ -145,17 +148,21 @@ class StartDialog(QWidget):
             self.file_edit.setText(fname)    
     
     def start_edit(self):
+        global main_win
         fname = self.file_edit.text()
         if not is_image_file_valid(fname):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
-            
+            return
+        start_dialog.hide()
+        main_win = Window(fname)
+        main_win.show()
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     #myapp = Window(sys.argv[1])
     if len(sys.argv) > 1:
-        myapp = StartDialog(sys.argv[1])
+        start_dialog = StartDialog(sys.argv[1])
     else:
-        myapp = StartDialog()
-    myapp.show()
+        start_dialog = StartDialog()
+    start_dialog.show()
     sys.exit(app.exec_())
