@@ -1,10 +1,18 @@
 #!/usr/bin/python
 
+
+
 import sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
 #from editor import Ui_MainWindow
+
+def is_image_file_valid(fname):
+    im = QImage(fname)
+    if im.isNull() or im.depth() != 1:
+        return False
+    return True
 
 def calculate_horizontal_cuts(image):
     (w, h) = (image.width(), image.height())
@@ -92,14 +100,17 @@ class Window(QWidget):
 
      
 class StartDialog(QWidget):
-    def __init__(self):
+    def __init__(self, initial_file_name=None):
         QWidget.__init__(self)
         self.resize(512, 200)
         
         self.grid = QGridLayout()
         self.name_edit = QLineEdit('Foobar')
         self.file_edit = QLineEdit()
+        if initial_file_name is not None:
+            self.file_edit.setText(initial_file_name)
         self.file_button = QPushButton('Browse')
+        self.connect(self.file_button, SIGNAL('clicked()'), self.open_file)
         self.combo = QComboBox()
         self.combo.addItem('Regular')
         self.combo.addItem('Bold')
@@ -117,8 +128,10 @@ class StartDialog(QWidget):
         
         hbox = QHBoxLayout()
         start_button = QPushButton('Start')
+        self.connect(start_button, SIGNAL('clicked()'), self.start_edit)
         hbox.addWidget(start_button)
         quit_button = QPushButton('Quit')
+        self.connect(quit_button, SIGNAL('clicked()'), qApp, SLOT('quit()'))
         hbox.addWidget(quit_button)
         w = QWidget()
         w.setLayout(hbox)
@@ -126,9 +139,23 @@ class StartDialog(QWidget):
         
         self.setLayout(self.grid)
         
+    def open_file(self):
+        fname = QFileDialog.getOpenFileName(self)
+        if fname is not None and fname != '':
+            self.file_edit.setText(fname)    
+    
+    def start_edit(self):
+        fname = self.file_edit.text()
+        if not is_image_file_valid(fname):
+            QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
+            
+        
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     #myapp = Window(sys.argv[1])
-    myapp = StartDialog()
+    if len(sys.argv) > 1:
+        myapp = StartDialog(sys.argv[1])
+    else:
+        myapp = StartDialog()
     myapp.show()
     sys.exit(app.exec_())
