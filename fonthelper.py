@@ -6,7 +6,7 @@ from PyQt4.QtGui import *
 
 from editor import Ui_MainWindow
 
-def evaluate_horizontal_cuts(image):
+def calculate_horizontal_cuts(image):
     (w, h) = (image.width(), image.height())
     sums = []
     for j in xrange(h):
@@ -14,7 +14,6 @@ def evaluate_horizontal_cuts(image):
         for i in xrange(w):
             total += image.pixelIndex(i, j)
         sums.append(total)
-    print sums
     return sums
     
 def calculate_cutlines_locations(sums):
@@ -47,14 +46,30 @@ def calculate_cutlines_locations(sums):
         element_strips.append((strip_start, strip_end))
     return element_strips
 
+def calculate_letter_boxes(image, xstrips):
+    boxes = []
+    (w, h) = (image.width(), image.height())
+    rotate = QMatrix().rotate(90)
+    for xs in xstrips:
+        print xs
+        (y0, y1) = xs
+        cur_image = image.copy(0, y0, w, y1-y0).transformed(rotate)
+        print "Size", cur_image.width(), cur_image.height()
+        ystrips = calculate_cutlines_locations(calculate_horizontal_cuts(cur_image))
+        for ys in ystrips:
+            (x0, x1) = ys
+            boxes.append(QRect(x0, y0, x1-x0, y1-y0))
+    return boxes
+
 
 class Window(QWidget):
     def __init__(self, image_file, parent = None):
         QWidget.__init__(self, parent)
         self.resize(640, 480)
         self.image = QImage(image_file)
-        strips = evaluate_horizontal_cuts(self.image)
+        strips = calculate_horizontal_cuts(self.image)
         self.hor_lines = calculate_cutlines_locations(strips)
+        self.boxes = calculate_letter_boxes(self.image, self.hor_lines)
 
     def paintEvent(self, event):
         w = self.image.width()
@@ -63,10 +78,8 @@ class Window(QWidget):
         paint.drawImage(0, 0, self.image)
         pen = QPen(Qt.black, 1, Qt.SolidLine)
         paint.setPen(pen)
-        for strip in self.hor_lines:
-            paint.drawLine(0, strip[0], w, strip[0])
-            paint.drawLine(0, strip[1], w, strip[1])
-
+        for box in self.boxes:
+            paint.drawRect(box)
 
         paint.end()
 
