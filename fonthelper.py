@@ -17,9 +17,7 @@
 #    You should have received a copy of the GNU General Public License   
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
-import sys
+import os, sys, subprocess, tempfile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -88,6 +86,9 @@ def calculate_letter_boxes(image, xstrips):
             boxes.append(box)
     return boxes
 
+
+def potrace_image(image):
+    pass
 
 class LetterBox():
     def __init__(self, rectangle):
@@ -174,7 +175,7 @@ class StartDialog(QWidget):
         main_win = Window(fname)
         main_win.show()
         
-if __name__ == "__main__":
+def start_program():
     app = QApplication(sys.argv)
     #myapp = Window(sys.argv[1])
     if len(sys.argv) > 1:
@@ -183,3 +184,27 @@ if __name__ == "__main__":
         start_dialog = StartDialog()
     start_dialog.show()
     sys.exit(app.exec_())
+
+def test_potrace():
+    image = QImage(sys.argv[1])
+    tfile = tempfile.NamedTemporaryFile(suffix='.ppm')
+    tempname = tfile.name
+    tfile.close()
+    if not image.save(tempname):
+        print "Danger!"
+    p = subprocess.Popen('potrace -c --eps -q ' + tempname + ' -o -', shell=True, stdout=subprocess.PIPE)
+    (so, se) = p.communicate()
+    lines = so.split('\n')
+    while not lines[0].endswith('setgray'):
+        lines.pop(0)
+    while not lines[-1].endswith('fill'):
+        lines.pop()
+    lines = lines[1:-1]
+    for line in lines:
+        print line
+    os.unlink(tempname)
+
+
+if __name__ == "__main__":
+    #start_program()
+    test_potrace()
