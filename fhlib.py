@@ -64,7 +64,7 @@ DisplaySize: -36
 AntiAlias: 1
 FitToEm: 1
 WinInfo: 57 19 19
-BeginChars: 65536 2
+BeginChars: 65536 %d
 
 """
 

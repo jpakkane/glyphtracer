@@ -206,7 +206,6 @@ def parse_postscript(commands):
             point_sets.append(points)
             points = []
         else:
-            print commands
             raise RuntimeError('Unknown PostScript command: ' + cmd)
     assert(len(points) == 0)
     return point_sets
@@ -220,7 +219,6 @@ def test_potrace():
         print "Danger!"
     points = potrace_image(tempname)
     os.unlink(tempname)
-#    print points
     write_sfd(file('test_out.sfd', 'w'), points)
     
 def potrace_image(filename):
@@ -253,7 +251,8 @@ def write_sfd(ofile, points):
     font_name = 'dummy'
     full_name = 'dummy'
     family_name = 'dummy'
-    ofile.write(sfd_header % (font_name, full_name, family_name))
+    num_letters = len(points)
+    ofile.write(sfd_header % (font_name, full_name, family_name, num_letters))
     
     # for letter in xxx
     letter_name = 'a'
@@ -275,9 +274,17 @@ def write_sfd(ofile, points):
                 first_point = False
             else:
                 if len(point) == 6:
-                    ofile.write(' c 0\n')
+                    if i < len(curve)-1 and len(curve[i+1]) == 2:
+                        flags = 2
+                    else:
+                        flags = 0
+                    ofile.write(' c %d\n' % flags)
                 elif len(point) == 2:
-                    ofile.write(' l 1\n')
+                    if i < len(curve)-1 and len(curve[i+1]) == 2:
+                        flags = 1
+                    else:
+                        flags = 2
+                    ofile.write(' l %d\n' % flags)
                 else:
                     raise RuntimeError('Incorrect amount of points: %d' % len(points))
     ofile.write(letter_footer)
