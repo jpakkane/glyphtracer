@@ -264,13 +264,24 @@ def write_sfd(ofile, points):
     ofile.write(letter_header % (letter_name, location1, location2, location3, width))
     for curve in points:
         first_point = True
-        for point in curve:
+        for i in xrange(len(curve)):
+            point = curve[i]
             if not first_point:
                 ofile.write(' ')
             ofile.write(' '.join([str(x) for x in point]))
-            ofile.write('\n')
+            # Print move commands.
             if first_point:
+                ofile.write(' m 0\n')
                 first_point = False
+            else:
+                if len(point) == 6:
+                    ofile.write(' c 0\n')
+                elif len(point) == 2:
+                    ofile.write(' l 1\n')
+                else:
+                    raise RuntimeError('Incorrect amount of points: %d' % len(points))
+    ofile.write(letter_footer)
+    ofile.write(sfd_footer)
 
 if __name__ == "__main__":
     #start_program()
