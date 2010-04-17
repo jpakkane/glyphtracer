@@ -206,6 +206,7 @@ def parse_postscript(commands):
             point_sets.append(points)
             points = []
         else:
+            print commands
             raise RuntimeError('Unknown PostScript command: ' + cmd)
     assert(len(points) == 0)
     return point_sets
@@ -217,8 +218,10 @@ def test_potrace():
     tfile.close()
     if not image.save(tempname):
         print "Danger!"
-    potrace_image(tempname)
+    points = potrace_image(tempname)
     os.unlink(tempname)
+#    print points
+    write_sfd(file('test_out.sfd', 'w'), points)
     
 def potrace_image(filename):
     p = subprocess.Popen('potrace -c --eps -q ' + filename + ' -o -', shell=True, stdout=subprocess.PIPE)
@@ -230,7 +233,6 @@ def potrace_image(filename):
         lines.pop()
     pointset = parse_postscript(lines)
     pointset = map(convert_points, pointset)
-    print pointset
     return pointset
 
 def convert_points(pointlist):
@@ -253,6 +255,23 @@ def write_sfd(ofile, points):
     family_name = 'dummy'
     ofile.write(sfd_header % (font_name, full_name, family_name))
     
+    # for letter in xxx
+    letter_name = 'a'
+    width = 672
+    location1 =  97
+    location2 = 97
+    location3 = 0
+    ofile.write(letter_header % (letter_name, location1, location2, location3, width))
+    for curve in points:
+        first_point = True
+        for point in curve:
+            if not first_point:
+                ofile.write(' ')
+            ofile.write(' '.join([str(x) for x in point]))
+            ofile.write('\n')
+            if first_point:
+                first_point = False
+
 if __name__ == "__main__":
     #start_program()
     test_potrace()

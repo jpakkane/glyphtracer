@@ -68,13 +68,20 @@ BeginChars: 65536 2
 
 """
 
-letter_template = """StartChar: %s
+sfd_footer = """EndChars
+EndSplineFont
+"""
+
+letter_header = """StartChar: %s
 Encoding: %d %d %d
-Width: 656
+Width: %d
 VWidth: 0
 Flags: HW
 LayerCount: 2
+Fore
+SplineSet
+"""
 
-EndSplineSet
+letter_footer = """EndSplineSet
 EndChar
 """
