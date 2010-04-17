@@ -20,6 +20,7 @@
 import os, sys, subprocess, tempfile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from fhlib import *
 
 start_dialog = None
 main_win = None
@@ -230,6 +231,7 @@ def potrace_image(filename):
     pointset = parse_postscript(lines)
     pointset = map(convert_points, pointset)
     print pointset
+    return pointset
 
 def convert_points(pointlist):
     starting_point = pointlist.pop(0)
@@ -245,6 +247,12 @@ def convert_points(pointlist):
         converted.append(p)
     return converted
 
+def write_sfd(ofile, points):
+    font_name = 'dummy'
+    full_name = 'dummy'
+    family_name = 'dummy'
+    ofile.write(sfd_header % (font_name, full_name, family_name))
+    
 if __name__ == "__main__":
     #start_program()
     test_potrace()
