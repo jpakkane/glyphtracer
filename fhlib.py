@@ -21,6 +21,11 @@
 
 import subprocess
 
+lowercase_list = [('a', 97), ('b', 98)]
+number_list = [('zero', 48), ('one', 49)]
+
+glyph_groups = [('lowercase', lowercase_list), ('numbers', number_list)]
+
 sfd_header = """SplineFontDB: 3.0
 FontName: %s
 FullName: %s

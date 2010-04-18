@@ -164,7 +164,7 @@ class StartDialog(QWidget):
             self.file_edit.setText(fname)    
     
     def start_edit(self):
-        global main_win
+        global main_win, start_dialog
         fname = self.file_edit.text()
         if not is_image_file_valid(fname):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
@@ -172,8 +172,30 @@ class StartDialog(QWidget):
         start_dialog.hide()
         main_win = Window(fname)
         main_win.show()
+
+class EditorWindow(QWidget):
+    def __init__(self, parent=None):
+        QWidget.__init__(self)
+        self.resize(512, 200)
+        
+        self.grid = QGridLayout()
+        sa = QScrollArea()
+        self.grid.addWidget(sa, 0, 0, 1, 4)
+        
+        self.combo = QComboBox()
+        self.combo.addItem('fo')
+        self.grid.addWidget(self.combo, 1, 0, 1, 1)
+        
+        self.grid.addWidget(QLabel('Glyph:'), 1, 1, 1, 1)
+        self.glyphname = QLabel()
+        self.grid.addWidget(self.glyphname, 1, 2, 1, 1)
+        self.save = QPushButton('Generate SFD file')
+        self.grid.addWidget(self.save, 1, 3, 1, 1)
+        
+        self.setLayout(self.grid)
         
 def start_program():
+    global start_dialog
     app = QApplication(sys.argv)
     #myapp = Window(sys.argv[1])
     if len(sys.argv) > 1:
@@ -181,6 +203,12 @@ def start_program():
     else:
         start_dialog = StartDialog()
     start_dialog.show()
+    sys.exit(app.exec_())
+
+def test_edwin():
+    app = QApplication(sys.argv)
+    bob = EditorWindow()
+    bob.show()
     sys.exit(app.exec_())
 
 
@@ -195,7 +223,7 @@ def test_potrace():
     os.unlink(tempname)
     write_sfd(file('test_out.sfd', 'w'), points)
     
-
 if __name__ == "__main__":
     #start_program()
-    test_potrace()
+    #test_potrace()
+    test_edwin()
