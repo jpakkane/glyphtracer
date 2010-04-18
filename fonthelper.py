@@ -96,6 +96,15 @@ class LetterBox():
     def contains(self, x, y):
         return self.r.contains(x, y)
 
+class GlyphInfo():
+    def __init__(self, name, codepoint):
+        self.name = name
+        self.codepoint = codepoint
+        self.box = None
+
+def data_to_glyphinfo(data):
+    return GlyphInfo(data[0], data[1])
+
 class SelectionArea(QWidget):
     def __init__(self, image_file, master_widget, parent = None):
         QWidget.__init__(self, parent)
@@ -206,6 +215,8 @@ class EditorWindow(QWidget):
     def __init__(self, image_file, parent=None):
         QWidget.__init__(self)
         self.resize(512, 400)
+        self.active_glyph = 0
+        self.glyphlist = []
         
         self.grid = QGridLayout()
         self.area = SelectionArea(image_file, self)
@@ -213,25 +224,26 @@ class EditorWindow(QWidget):
         sa.setWidget(self.area)
         self.grid.addWidget(sa, 0, 0, 1, 4)
         
+        self.grid.addWidget(QLabel('Glyph:'), 1, 1, 1, 1)
+        self.glyph_label = QLabel()
+        self.grid.addWidget(self.glyph_label, 1, 2, 1, 1)
+        self.save = QPushButton('Generate SFD file')
+        self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
+        self.grid.addWidget(self.save, 1, 3, 1, 1)
+        
         self.combo = QComboBox()
         self.build_combo()
         self.connect(self.combo, SIGNAL('activated(int)'), self.glyph_set_changed)
         self.grid.addWidget(self.combo, 1, 0, 1, 1)
-        
-        self.grid.addWidget(QLabel('Glyph:'), 1, 1, 1, 1)
-        self.glyphname = QLabel()
-        self.grid.addWidget(self.glyphname, 1, 2, 1, 1)
-        self.save = QPushButton('Generate SFD file')
-        self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
-        self.grid.addWidget(self.save, 1, 3, 1, 1)
         
         self.setLayout(self.grid)
         
     def build_combo(self):
         self.groups = {}
         for name, glyphs in glyph_groups:
-            self.groups[name] = glyphs
+            self.groups[name] = [data_to_glyphinfo(x) for x in glyphs]
             self.combo.addItem(name)
+        self.glyph_set_changed(0)
     
     def user_click(self, mouse_event):
         (x, y) = (mouse_event.x(), mouse_event.y())
@@ -242,10 +254,16 @@ class EditorWindow(QWidget):
             self.area.repaint()
         
     def keyPressEvent(self, key_event):
-        print key_event.key()
+        self.active_glyph = (self.active_glyph + 1) % len(self.glyphlist)
+        self.set_glyph_info()
         
     def glyph_set_changed(self, i):
-        print 'changed to', self.combo.currentText()
+        self.active_glyph = 0
+        self.glyphlist = self.groups[str(self.combo.currentText())]
+        self.set_glyph_info()
+        
+    def set_glyph_info(self):
+        self.glyph_label.setText(self.glyphlist[self.active_glyph].name)
         
     def generate_sfd(self):
         print "Generating SFD."

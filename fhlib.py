@@ -21,6 +21,8 @@
 
 import subprocess
 
+# These are read only lists that define different glyph groups.
+# In the future they may be parsed from a conf file.
 lowercase_list = [('a', 97), ('b', 98)]
 number_list = [('zero', 48), ('one', 49)]
 
