@@ -235,9 +235,7 @@ def potrace_image(filename):
 
 def convert_points(pointlist):
     pointlist = to_absolute(pointlist)
-    return pointlist
-    #pointlist.reverse()
-    #return [flip_point(x) for x in pointlist]
+    return flip_curve(pointlist)
 
 def to_absolute(pointlist):
     starting_point = pointlist[0]
@@ -265,14 +263,27 @@ def to_absolute(pointlist):
         current_point = [newp[-2], newp[-1]]
     return converted
 
-def flip_point(p):
-    if len(p) == 2:
-        return p
-    elif len(p) == 6:
-        return [p[2], p[3], p[0], p[1], p[4], p[5]]
-    else:
-        raise RuntimeError('Unknown pixel size error.')
-  
+def flip_curve(curve):
+    first = curve[0]
+    last = curve[-1]
+    assert(first[0] == last[-2])
+    assert(first[1] == last[-1])
+    flipped = [first]
+    for i in range(len(curve))[::-1]:
+        curp = curve[i]
+        if i == 0:
+            prevp = first
+        else:
+            prevp = curve[i-1]
+        if len(curp) == 6:
+            newp = curp[2:4] + curp[0:2] + prevp[-2:]
+        elif len(curp) == 2:
+            newp = prevp[-2:]
+        flipped.append(newp)
+        #print 'old', curve[i]
+        #print 'new', newp
+    return flipped
+
 
 def write_sfd(ofile, points):
     font_name = 'dummy'
@@ -311,7 +322,7 @@ def write_sfd(ofile, points):
                     flags = 2
                 ofile.write(' l %d\n' % flags)
             else:
-                raise RuntimeError('Incorrect amount of points: %d' % len(points))
+                raise RuntimeError('Incorrect amount of points: %d' % len(point))
     ofile.write(letter_footer)
     ofile.write(sfd_footer)
 
