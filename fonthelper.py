@@ -269,7 +269,7 @@ def flip_curve(curve):
     assert(first[0] == last[-2])
     assert(first[1] == last[-1])
     flipped = [first]
-    for i in range(len(curve))[::-1]:
+    for i in range(len(curve))[:0:-1]:
         curp = curve[i]
         if i == 0:
             prevp = first
