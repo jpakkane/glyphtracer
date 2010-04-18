@@ -92,15 +92,21 @@ class LetterBox():
     def __init__(self, rectangle):
         self.r = rectangle
         self.taken = False
+    
+    def contains(self, x, y):
+        return self.r.contains(x, y)
 
 class SelectionArea(QWidget):
-    def __init__(self, image_file, parent = None):
+    def __init__(self, image_file, master_widget, parent = None):
         QWidget.__init__(self, parent)
+        self.master = master_widget
         self.image = QImage(image_file)
         self.resize(self.image.width(), self.image.height())
         strips = calculate_horizontal_sums(self.image)
         hor_lines = calculate_cutlines_locations(strips)
         self.boxes = calculate_letter_boxes(self.image, hor_lines)
+        self.selected_brush = QBrush(QColor(0, 0, 0, 127))
+        self.active_brush = QBrush(QColor(255, 0, 0, 127))
 
     def paintEvent(self, event):
         w = self.image.width()
@@ -109,13 +115,25 @@ class SelectionArea(QWidget):
         paint.drawImage(0, 0, self.image)
         pen = QPen(Qt.black, 1, Qt.SolidLine)
         paint.setPen(pen)
-        b = QBrush(QColor(0, 0, 0, 127))
         for box in self.boxes:
             paint.drawRect(box.r)
             if box.taken:
-                paint.fillRect(box.r, b)
+                paint.fillRect(box.r, self.selected_brush)
         #paint.setPen(pen)
         paint.end()
+        
+    def find_box(self, x, y):
+        for b in self.boxes:
+            if b.contains(x, y):
+                return b
+        return None
+    
+    def mousePressEvent(self, me):
+        # I could not figure out how to connect
+        # to events in some other widget, so
+        # we have this ugly hack.
+        self.master.user_click(me)
+            
 
      
 class StartDialog(QWidget):
@@ -179,11 +197,11 @@ class EditorWindow(QWidget):
         self.resize(512, 400)
         
         self.grid = QGridLayout()
-        self.area = SelectionArea(image_file)
+        self.area = SelectionArea(image_file, self)
         sa = QScrollArea()
         sa.setWidget(self.area)
         self.grid.addWidget(sa, 0, 0, 1, 4)
-        
+        self.connect(self.area, SIGNAL('mousePressEvent()'), self.user_click)
         
         self.combo = QComboBox()
         self.build_combo()
@@ -202,6 +220,10 @@ class EditorWindow(QWidget):
         for name, glyphs in glyph_groups:
             self.groups[name] = glyphs
             self.combo.addItem(name)
+    
+    def user_click(self, mouse_event):
+        print mouse_event.x(), mouse_event.y()
+        
         
 def start_program():
     global start_dialog
