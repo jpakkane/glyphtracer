@@ -102,9 +102,12 @@ class SelectionArea(QWidget):
         self.master = master_widget
         self.image = QImage(image_file)
         self.resize(self.image.width(), self.image.height())
+        
         strips = calculate_horizontal_sums(self.image)
         hor_lines = calculate_cutlines_locations(strips)
         self.boxes = calculate_letter_boxes(self.image, hor_lines)
+        self.active_box = None
+
         self.selected_brush = QBrush(QColor(0, 0, 0, 127))
         self.active_brush = QBrush(QColor(255, 0, 0, 127))
 
@@ -117,7 +120,9 @@ class SelectionArea(QWidget):
         paint.setPen(pen)
         for box in self.boxes:
             paint.drawRect(box.r)
-            if box.taken:
+            if box is self.active_box:
+                paint.fillRect(box.r, self.active_brush)                
+            elif box.taken:
                 paint.fillRect(box.r, self.selected_brush)
         #paint.setPen(pen)
         paint.end()
@@ -127,6 +132,12 @@ class SelectionArea(QWidget):
             if b.contains(x, y):
                 return b
         return None
+    
+    def set_active_box(self, box):
+        self.active_box = box
+        
+    def take_box(self, box):
+        box.taken = True
     
     def mousePressEvent(self, me):
         # I could not figure out how to connect
@@ -201,7 +212,6 @@ class EditorWindow(QWidget):
         sa = QScrollArea()
         sa.setWidget(self.area)
         self.grid.addWidget(sa, 0, 0, 1, 4)
-        self.connect(self.area, SIGNAL('mousePressEvent()'), self.user_click)
         
         self.combo = QComboBox()
         self.build_combo()
@@ -222,8 +232,15 @@ class EditorWindow(QWidget):
             self.combo.addItem(name)
     
     def user_click(self, mouse_event):
-        print mouse_event.x(), mouse_event.y()
+        (x, y) = (mouse_event.x(), mouse_event.y())
+        newbox = self.area.find_box(x, y)
+        if newbox:
+            self.area.set_active_box(newbox)
+            self.area.take_box(newbox)
+            self.area.repaint()
         
+    def keyPressEvent(self, key_event):
+        print key_event.key()
         
 def start_program():
     global start_dialog
