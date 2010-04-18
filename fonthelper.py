@@ -245,7 +245,6 @@ def to_absolute(pointlist):
     converted = [starting_point]
     current_point = starting_point
     for p in pointlist[1:]:
-        newp = []
         if len(p) == 2:
             newp = [current_point[0] + p[0], current_point[1] + p[1]]
         elif len(p) == 6:
@@ -257,7 +256,7 @@ def to_absolute(pointlist):
             newp[4] = newp[2] + p[4]
             newp[5] = newp[3] + p[5]
         else:
-            raise RuntimeError('Unknown pixel size error.')
+            raise RuntimeError('Unknown point size error.')
 #        for i in range(len(p)/2):
 #            current_point = [current_point[0] - p[i*2], current_point[1] - p[i*2+1]]
 #            p[i*2] = current_point[0]
