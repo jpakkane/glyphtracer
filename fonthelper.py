@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License   
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys, subprocess, tempfile
+import os, sys, tempfile
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from fhlib import *
@@ -87,9 +87,6 @@ def calculate_letter_boxes(image, xstrips):
             boxes.append(box)
     return boxes
 
-
-def potrace_image(image):
-    pass
 
 class LetterBox():
     def __init__(self, rectangle):
@@ -186,29 +183,6 @@ def start_program():
     start_dialog.show()
     sys.exit(app.exec_())
 
-def integerise(command_line):
-    return [int(x) for x in command_line.split()[0:-1]]
-    
-
-def parse_postscript(commands):
-    point_sets = []
-    points = []
-    assert(commands[0].endswith('moveto'))
-    for cmd in commands:
-        if cmd.endswith('moveto'):
-            assert(len(points) == 0)
-            points.append(integerise(cmd))
-        elif cmd.endswith('rcurveto'):
-            points.append(integerise(cmd))
-        elif cmd.endswith('rlineto'):
-            points.append(integerise(cmd))
-        elif cmd.endswith('closepath'):
-            point_sets.append(points)
-            points = []
-        else:
-            raise RuntimeError('Unknown PostScript command: ' + cmd)
-    assert(len(points) == 0)
-    return point_sets
 
 def test_potrace():
     image = QImage(sys.argv[1])
@@ -221,110 +195,6 @@ def test_potrace():
     os.unlink(tempname)
     write_sfd(file('test_out.sfd', 'w'), points)
     
-def potrace_image(filename):
-    p = subprocess.Popen('potrace -c --eps -q ' + filename + ' -o -', shell=True, stdout=subprocess.PIPE)
-    (so, se) = p.communicate()
-    lines = so.split('\n')
-    while not lines[0].endswith('moveto'):
-        lines.pop(0)
-    while not lines[-1].endswith('closepath'):
-        lines.pop()
-    pointset = parse_postscript(lines)
-    pointset = map(convert_points, pointset)
-    return pointset
-
-def convert_points(pointlist):
-    pointlist = to_absolute(pointlist)
-    return flip_curve(pointlist)
-
-def to_absolute(pointlist):
-    starting_point = pointlist[0]
-    assert(len(starting_point) == 2)
-    converted = [starting_point]
-    current_point = starting_point
-    for p in pointlist[1:]:
-        if len(p) == 2:
-            newp = [current_point[0] + p[0], current_point[1] + p[1]]
-        elif len(p) == 6:
-            newp = [0]*6
-            newp[0] = current_point[0] + p[0]
-            newp[1] = current_point[1] + p[1]
-            newp[2] = current_point[0] + p[2]
-            newp[3] = current_point[1] + p[3]
-            newp[4] = current_point[0] + p[4]
-            newp[5] = current_point[1] + p[5]
-        else:
-            raise RuntimeError('Unknown point size error.')
-#        for i in range(len(p)/2):
-#            current_point = [current_point[0] - p[i*2], current_point[1] - p[i*2+1]]
-#            p[i*2] = current_point[0]
-#            p[i*2+1] = current_point[1]
-        converted.append(newp)
-        current_point = [newp[-2], newp[-1]]
-    return converted
-
-def flip_curve(curve):
-    first = curve[0]
-    last = curve[-1]
-    assert(first[0] == last[-2])
-    assert(first[1] == last[-1])
-    flipped = [first]
-    for i in range(len(curve))[:0:-1]:
-        curp = curve[i]
-        if i == 0:
-            prevp = first
-        else:
-            prevp = curve[i-1]
-        if len(curp) == 6:
-            newp = curp[2:4] + curp[0:2] + prevp[-2:]
-        elif len(curp) == 2:
-            newp = prevp[-2:]
-        flipped.append(newp)
-        #print 'old', curve[i]
-        #print 'new', newp
-    return flipped
-
-
-def write_sfd(ofile, points):
-    font_name = 'dummy'
-    full_name = 'dummy'
-    family_name = 'dummy'
-    num_letters = len(points)
-    ofile.write(sfd_header % (font_name, full_name, family_name, num_letters))
-    
-    # for letter in xxx
-    letter_name = 'a'
-    width = 672
-    location1 =  97
-    location2 = 97
-    location3 = 0
-    ofile.write(letter_header % (letter_name, location1, location2, location3, width))
-    for curve in points:
-        fp = curve[0]
-        assert(len(fp) == 2)
-        ofile.write("%d %d m 0\n" % tuple(fp))
-
-        for i in xrange(1, len(curve)):
-            point = curve[i]
-            ofile.write(' ')
-            ofile.write(' '.join([str(x) for x in point]))
-            # Print move commands.
-            if len(point) == 6:
-                if i < len(curve)-1 and len(curve[i+1]) == 2:
-                    flags = 2
-                else:
-                    flags = 0
-                ofile.write(' c %d\n' % flags)
-            elif len(point) == 2:
-                if i < len(curve)-1 and len(curve[i+1]) == 2:
-                    flags = 1
-                else:
-                    flags = 2
-                ofile.write(' l %d\n' % flags)
-            else:
-                raise RuntimeError('Incorrect amount of points: %d' % len(point))
-    ofile.write(letter_footer)
-    ofile.write(sfd_footer)
 
 if __name__ == "__main__":
     #start_program()
