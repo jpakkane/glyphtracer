@@ -215,12 +215,14 @@ class EditorWindow(QWidget):
         
         self.combo = QComboBox()
         self.build_combo()
+        self.connect(self.combo, SIGNAL('activated(int)'), self.glyph_set_changed)
         self.grid.addWidget(self.combo, 1, 0, 1, 1)
         
         self.grid.addWidget(QLabel('Glyph:'), 1, 1, 1, 1)
         self.glyphname = QLabel()
         self.grid.addWidget(self.glyphname, 1, 2, 1, 1)
         self.save = QPushButton('Generate SFD file')
+        self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
         self.grid.addWidget(self.save, 1, 3, 1, 1)
         
         self.setLayout(self.grid)
@@ -241,6 +243,12 @@ class EditorWindow(QWidget):
         
     def keyPressEvent(self, key_event):
         print key_event.key()
+        
+    def glyph_set_changed(self, i):
+        print 'changed to', self.combo.currentText()
+        
+    def generate_sfd(self):
+        print "Generating SFD."
         
 def start_program():
     global start_dialog
