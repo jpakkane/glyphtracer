@@ -93,11 +93,11 @@ class LetterBox():
         self.r = rectangle
         self.taken = False
 
-class Window(QWidget):
+class SelectionArea(QWidget):
     def __init__(self, image_file, parent = None):
         QWidget.__init__(self, parent)
-        self.resize(640, 480)
         self.image = QImage(image_file)
+        self.resize(self.image.width(), self.image.height())
         strips = calculate_horizontal_sums(self.image)
         hor_lines = calculate_cutlines_locations(strips)
         self.boxes = calculate_letter_boxes(self.image, hor_lines)
@@ -170,20 +170,23 @@ class StartDialog(QWidget):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
             return
         start_dialog.hide()
-        main_win = Window(fname)
+        main_win = SelectionArea(fname)
         main_win.show()
 
 class EditorWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, image_file, parent=None):
         QWidget.__init__(self)
-        self.resize(512, 200)
+        self.resize(512, 400)
         
         self.grid = QGridLayout()
+        self.area = SelectionArea(image_file)
         sa = QScrollArea()
+        sa.setWidget(self.area)
         self.grid.addWidget(sa, 0, 0, 1, 4)
         
+        
         self.combo = QComboBox()
-        self.combo.addItem('fo')
+        self.build_combo()
         self.grid.addWidget(self.combo, 1, 0, 1, 1)
         
         self.grid.addWidget(QLabel('Glyph:'), 1, 1, 1, 1)
@@ -194,10 +197,16 @@ class EditorWindow(QWidget):
         
         self.setLayout(self.grid)
         
+    def build_combo(self):
+        self.groups = {}
+        for name, glyphs in glyph_groups:
+            self.groups[name] = glyphs
+            self.combo.addItem(name)
+        
 def start_program():
     global start_dialog
     app = QApplication(sys.argv)
-    #myapp = Window(sys.argv[1])
+    #myapp = SelectionArea(sys.argv[1])
     if len(sys.argv) > 1:
         start_dialog = StartDialog(sys.argv[1])
     else:
@@ -207,7 +216,7 @@ def start_program():
 
 def test_edwin():
     app = QApplication(sys.argv)
-    bob = EditorWindow()
+    bob = EditorWindow(sys.argv[1])
     bob.show()
     sys.exit(app.exec_())
 
