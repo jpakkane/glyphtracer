@@ -234,18 +234,46 @@ def potrace_image(filename):
     return pointset
 
 def convert_points(pointlist):
-    starting_point = pointlist.pop(0)
+    pointlist = to_absolute(pointlist)
+    return pointlist
+    #pointlist.reverse()
+    #return [flip_point(x) for x in pointlist]
+
+def to_absolute(pointlist):
+    starting_point = pointlist[0]
+    assert(len(starting_point) == 2)
     converted = [starting_point]
-    pointlist.reverse()
     current_point = starting_point
-    for p in pointlist:
+    for p in pointlist[1:]:
         newp = []
-        for i in range(len(p)/2):
-            current_point = [current_point[0] - p[i*2], current_point[1] - p[i*2+1]]
-            p[i*2] = current_point[0]
-            p[i*2+1] = current_point[1]
-        converted.append(p)
+        if len(p) == 2:
+            newp = [current_point[0] + p[0], current_point[1] + p[1]]
+        elif len(p) == 6:
+            newp = [0]*6
+            newp[0] = current_point[0] + p[0]
+            newp[1] = current_point[1] + p[1]
+            newp[2] = newp[0] + p[2]
+            newp[3] = newp[1] + p[3]
+            newp[4] = newp[2] + p[4]
+            newp[5] = newp[3] + p[5]
+        else:
+            raise RuntimeError('Unknown pixel size error.')
+#        for i in range(len(p)/2):
+#            current_point = [current_point[0] - p[i*2], current_point[1] - p[i*2+1]]
+#            p[i*2] = current_point[0]
+#            p[i*2+1] = current_point[1]
+        converted.append(newp)
+        current_point = [newp[-2], newp[-1]]
     return converted
+
+def flip_point(p):
+    if len(p) == 2:
+        return p
+    elif len(p) == 6:
+        return [p[2], p[3], p[0], p[1], p[4], p[5]]
+    else:
+        raise RuntimeError('Unknown pixel size error.')
+  
 
 def write_sfd(ofile, points):
     font_name = 'dummy'
@@ -262,31 +290,29 @@ def write_sfd(ofile, points):
     location3 = 0
     ofile.write(letter_header % (letter_name, location1, location2, location3, width))
     for curve in points:
-        first_point = True
-        for i in xrange(len(curve)):
+        fp = curve[0]
+        assert(len(fp) == 2)
+        ofile.write("%d %d m 0\n" % tuple(fp))
+
+        for i in xrange(1, len(curve)):
             point = curve[i]
-            if not first_point:
-                ofile.write(' ')
+            ofile.write(' ')
             ofile.write(' '.join([str(x) for x in point]))
             # Print move commands.
-            if first_point:
-                ofile.write(' m 0\n')
-                first_point = False
-            else:
-                if len(point) == 6:
-                    if i < len(curve)-1 and len(curve[i+1]) == 2:
-                        flags = 2
-                    else:
-                        flags = 0
-                    ofile.write(' c %d\n' % flags)
-                elif len(point) == 2:
-                    if i < len(curve)-1 and len(curve[i+1]) == 2:
-                        flags = 1
-                    else:
-                        flags = 2
-                    ofile.write(' l %d\n' % flags)
+            if len(point) == 6:
+                if i < len(curve)-1 and len(curve[i+1]) == 2:
+                    flags = 2
                 else:
-                    raise RuntimeError('Incorrect amount of points: %d' % len(points))
+                    flags = 0
+                ofile.write(' c %d\n' % flags)
+            elif len(point) == 2:
+                if i < len(curve)-1 and len(curve[i+1]) == 2:
+                    flags = 1
+                else:
+                    flags = 2
+                ofile.write(' l %d\n' % flags)
+            else:
+                raise RuntimeError('Incorrect amount of points: %d' % len(points))
     ofile.write(letter_footer)
     ofile.write(sfd_footer)
 
