@@ -251,10 +251,10 @@ def to_absolute(pointlist):
             newp = [0]*6
             newp[0] = current_point[0] + p[0]
             newp[1] = current_point[1] + p[1]
-            newp[2] = newp[0] + p[2]
-            newp[3] = newp[1] + p[3]
-            newp[4] = newp[2] + p[4]
-            newp[5] = newp[3] + p[5]
+            newp[2] = current_point[0] + p[2]
+            newp[3] = current_point[1] + p[3]
+            newp[4] = current_point[0] + p[4]
+            newp[5] = current_point[1] + p[5]
         else:
             raise RuntimeError('Unknown point size error.')
 #        for i in range(len(p)/2):
