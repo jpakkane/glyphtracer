@@ -19,7 +19,7 @@
 
 # Fonthelper library files and stuff
 
-import subprocess
+import os, subprocess, tempfile
 
 # These are read only lists that define different glyph groups.
 # In the future they may be parsed from a conf file.
@@ -136,6 +136,18 @@ def potrace_image(filename):
     pointset = map(convert_points, pointset)
     return pointset
 
+def crop_and_trace(image, box):
+    tfile = tempfile.NamedTemporaryFile(suffix='.pgm')
+    tempname = tfile.name
+    tfile.close()
+    cropped = image.copy(box)
+    if not cropped.save(tempname):
+        raise RuntimeError('Could not save cropped image')
+    points = potrace_image(tempname)
+    os.unlink(tempname)
+    return points
+    
+
 def convert_points(pointlist):
     pointlist = to_absolute(pointlist)
     return flip_curve(pointlist)
@@ -181,21 +193,11 @@ def flip_curve(curve):
         flipped.append(newp)
     return flipped
 
-
-def write_sfd(ofile, points):
-    font_name = 'dummy'
-    full_name = 'dummy'
-    family_name = 'dummy'
-    num_letters = len(points)
-    ofile.write(sfd_header % (font_name, full_name, family_name, num_letters))
-    
-    # for letter in xxx
-    letter_name = 'a'
+def process_glyph(ofile, image, glyph):
     width = 672
-    location1 =  97
-    location2 = 97
     location3 = 0
-    ofile.write(letter_header % (letter_name, location1, location2, location3, width))
+    ofile.write(letter_header % (glyph.name, glyph.codepoint, glyph.codepoint, location3, width))
+    points = crop_and_trace(image, glyph.box.r)
     for curve in points:
         fp = curve[0]
         assert(len(fp) == 2)
@@ -221,4 +223,17 @@ def write_sfd(ofile, points):
             else:
                 raise RuntimeError('Incorrect amount of points: %d' % len(point))
     ofile.write(letter_footer)
+    
+
+def write_sfd(ofilename, image, glyphs):
+    ofile = file(ofilename, 'w')
+    font_name = 'dummy'
+    full_name = 'dummy'
+    family_name = 'dummy'
+    num_letters = len(glyphs)
+    ofile.write(sfd_header % (font_name, full_name, family_name, num_letters))
+
+    for glyph in glyphs:
+        process_glyph(ofile, image, glyph)
+    
     ofile.write(sfd_footer)

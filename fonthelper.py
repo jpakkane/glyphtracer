@@ -17,7 +17,7 @@
 #    You should have received a copy of the GNU General Public License   
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys, tempfile
+import os, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from fhlib import *
@@ -300,7 +300,7 @@ class EditorWindow(QWidget):
         
     def generate_sfd(self):
         selected = self.get_selected_glyphs()
-        print len(selected)
+        write_sfd("temporary_out.sfd", self.area.image, selected)
         
 def start_program():
     global start_dialog
@@ -318,18 +318,6 @@ def test_edwin():
     bob = EditorWindow(sys.argv[1])
     bob.show()
     sys.exit(app.exec_())
-
-
-def test_potrace():
-    image = QImage(sys.argv[1])
-    tfile = tempfile.NamedTemporaryFile(suffix='.pgm')
-    tempname = tfile.name
-    tfile.close()
-    if not image.save(tempname):
-        print "Danger!"
-    points = potrace_image(tempname)
-    os.unlink(tempname)
-    write_sfd(file('test_out.sfd', 'w'), points)
     
 if __name__ == "__main__":
     #start_program()
