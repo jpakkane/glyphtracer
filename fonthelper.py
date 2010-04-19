@@ -259,11 +259,20 @@ class EditorWindow(QWidget):
             self.area.repaint()
         
     def keyPressEvent(self, key_event):
-        self.go_to_next_glyph()
+        if key_event.key() == Qt.Key_Space:
+            forward = True
+        else:
+            forward = False
+        self.go_to_next_glyph(forward)
         self.area.repaint()
         
-    def go_to_next_glyph(self):
-        self.active_glyph = (self.active_glyph + 1) % len(self.glyphlist)
+    def go_to_next_glyph(self, forward=True):
+        if forward:
+            shift = 1
+        else:
+            shift = -1
+        gs = len(self.glyphlist)
+        self.active_glyph = (self.active_glyph + shift + gs) % gs
         self.set_glyph_info()
         self.area.set_active_box(self.glyphlist[self.active_glyph].box)
         
