@@ -292,8 +292,15 @@ class EditorWindow(QWidget):
                     g.box = None
                     return
         
+    def get_selected_glyphs(self):
+        selected = []
+        for name in self.groups.keys():
+            selected += filter(lambda x: x.box is not None, self.groups[name])
+        return selected
+        
     def generate_sfd(self):
-        print "Generating SFD."
+        selected = self.get_selected_glyphs()
+        print len(selected)
         
 def start_program():
     global start_dialog
