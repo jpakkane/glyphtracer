@@ -249,13 +249,23 @@ class EditorWindow(QWidget):
         (x, y) = (mouse_event.x(), mouse_event.y())
         newbox = self.area.find_box(x, y)
         if newbox:
-            self.area.set_active_box(newbox)
+            self.unselect(newbox)
             self.area.take_box(newbox)
+            oldbox = self.glyphlist[self.active_glyph].box
+            if oldbox is not None:
+                oldbox.taken = False
+            self.glyphlist[self.active_glyph].box = newbox
+            self.go_to_next_glyph() 
             self.area.repaint()
         
     def keyPressEvent(self, key_event):
+        self.go_to_next_glyph()
+        self.area.repaint()
+        
+    def go_to_next_glyph(self):
         self.active_glyph = (self.active_glyph + 1) % len(self.glyphlist)
         self.set_glyph_info()
+        self.area.set_active_box(self.glyphlist[self.active_glyph].box)
         
     def glyph_set_changed(self, i):
         self.active_glyph = 0
@@ -264,6 +274,14 @@ class EditorWindow(QWidget):
         
     def set_glyph_info(self):
         self.glyph_label.setText(self.glyphlist[self.active_glyph].name)
+        
+    def unselect(self, box):
+        box.taken = False
+        for name in self.groups.keys():
+            for g in self.groups[name]:
+                if g.box is box:
+                    g.box = None
+                    return
         
     def generate_sfd(self):
         print "Generating SFD."
