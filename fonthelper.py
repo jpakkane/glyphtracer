@@ -136,36 +136,34 @@ class SelectionArea(QWidget):
         # we have this ugly hack.
         self.master.user_click(me)
             
-
-     
 class StartDialog(QWidget):
     def __init__(self, initial_file_name=None):
         QWidget.__init__(self)
         self.resize(512, 200)
         
         self.grid = QGridLayout()
-        self.name_edit = QLineEdit('Foobar')
+        self.name_edit = QLineEdit('MyFont')
         self.file_edit = QLineEdit()
+        self.output_edit = QLineEdit()
         if initial_file_name is not None:
             self.file_edit.setText(initial_file_name)
+            self.set_output_file_from_source(initial_file_name)
         self.file_button = QPushButton('Browse')
         self.connect(self.file_button, SIGNAL('clicked()'), self.open_file)
-        self.combo = QComboBox()
-        self.combo.addItem('Regular')
-        self.combo.addItem('Bold')
-        self.combo.addItem('Italic')
-        self.combo.addItem('BoldItalic')
         
         self.grid.setSpacing(10)
         self.grid.addWidget(QLabel('Font name'), 0, 0)
         self.grid.addWidget(self.name_edit, 0, 1, 1, 2)
-        self.grid.addWidget(QLabel('Type'), 1, 0)
-        self.grid.addWidget(self.combo, 1, 1, 1, 2)
-        self.grid.addWidget(QLabel('Image file'), 2, 0)
-        self.grid.addWidget(self.file_edit, 2, 1)
-        self.grid.addWidget(self.file_button, 2, 2)
+        self.grid.addWidget(QLabel('Image file'), 1, 0)
+        self.grid.addWidget(self.file_edit, 1, 1)
+        self.grid.addWidget(self.file_button, 1, 2)
+        self.grid.addWidget(QLabel('Output file'), 2, 0)
+        self.grid.addWidget(self.output_edit, 2, 1, 1, 2)
         
         hbox = QHBoxLayout()
+        about_button = QPushButton('About')
+        self.connect(about_button, SIGNAL('clicked()'), self.about_message)
+        hbox.addWidget(about_button)
         start_button = QPushButton('Start')
         self.connect(start_button, SIGNAL('clicked()'), self.start_edit)
         hbox.addWidget(start_button)
@@ -181,16 +179,40 @@ class StartDialog(QWidget):
     def open_file(self):
         fname = QFileDialog.getOpenFileName(self)
         if fname is not None and fname != '':
-            self.file_edit.setText(fname)    
+            self.file_edit.setText(fname)
+            self.set_output_file_from_source(fname)
+    
+    def set_output_file_from_source(self, name):
+        parts = str(name).split('.')
+        if len(parts) > 1:
+            parts = parts[:-1]
+        parts.append('sfd')
+        self.output_edit.setText('.'.join(parts))
+    
+    def about_message(self):
+        QMessageBox.information(self, "About Fonthelper", "Fonthelper is (C) 2010 Jussi Pakkanen.\nIt is available under the Gnu General Public License v3 or later..")
+    
+    def does_file_exist(self, fname):
+        try:
+            f = file(fname, 'r')
+            return True
+        except IOException:
+            return False
     
     def start_edit(self):
         global main_win, start_dialog
         fname = self.file_edit.text()
+        output = self.output_edit.text()
+        font_name = self.name_edit.text()
         if not is_image_file_valid(fname):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
             return
+        if self.does_file_exist(output):
+            if QMessageBox.critical(self, "File exists", "Output file %s already exists." % output,\
+                                       'Overwrite it', 'Select a different file') != 0:
+                return
         start_dialog.hide()
-        main_win = SelectionArea(fname)
+        main_win = EditorWindow(fname, font_name, output)
         main_win.show()
 
 class EditorWindow(QWidget):
@@ -305,5 +327,5 @@ def test_edwin():
     sys.exit(app.exec_())
     
 if __name__ == "__main__":
-    #start_program()
-    test_edwin()
+    start_program()
+    #test_edwin()
