@@ -146,6 +146,8 @@ def parse_postscript(commands):
         elif cmd.endswith('closepath'):
             point_sets.append(points)
             points = []
+        elif cmd == 'fill':
+            pass # There is more than one blob in the image. But that's ok.
         else:
             raise RuntimeError('Unknown PostScript command: ' + cmd)
     assert(len(points) == 0)
