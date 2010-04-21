@@ -194,11 +194,12 @@ class StartDialog(QWidget):
         main_win.show()
 
 class EditorWindow(QWidget):
-    def __init__(self, image_file, parent=None):
+    def __init__(self, image_file, font_name, parent=None):
         QWidget.__init__(self)
         self.resize(512, 400)
         self.active_glyph = 0
         self.glyphlist = []
+        self.font_name = font_name
         
         self.grid = QGridLayout()
         self.area = SelectionArea(image_file, self)
@@ -282,7 +283,7 @@ class EditorWindow(QWidget):
         
     def generate_sfd(self):
         selected = self.get_selected_glyphs()
-        write_sfd("temporary_out.sfd", self.area.image, selected)
+        write_sfd("temporary_out.sfd", self.font_name, self.area.image, selected)
         
 def start_program():
     global start_dialog
@@ -297,7 +298,7 @@ def start_program():
 
 def test_edwin():
     app = QApplication(sys.argv)
-    bob = EditorWindow(sys.argv[1])
+    bob = EditorWindow(sys.argv[1], 'MyFont')
     bob.show()
     sys.exit(app.exec_())
     

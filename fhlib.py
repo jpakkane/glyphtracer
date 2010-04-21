@@ -107,6 +107,7 @@ descent= total_height - ascent
 height_ratio = 0.9
 highest_y_coordinate = height_ratio * ascent
 potrace_pixel_multiplier = 10
+rbearing = 150
 
 class LetterBox():
     def __init__(self, rectangle):
@@ -223,7 +224,9 @@ def pointlist_to_str(points, scale):
     return ' '.join([str(scale*p) for p in points])
 
 def process_glyph(ofile, image, glyph, scale):
-    width = 672
+    if glyph.box is None:
+        return
+    width = glyph.box.r.width()*potrace_pixel_multiplier*scale + rbearing
     location3 = 0
     ofile.write(letter_header % (glyph.name, glyph.codepoint, glyph.codepoint, location3, width))
     points = crop_and_trace(image, glyph.box.r)
@@ -265,11 +268,11 @@ def calculate_scale(glyphs):
     highest_box = max_y(glyphs)
     return highest_y_coordinate/(potrace_pixel_multiplier*highest_box)
 
-def write_sfd(ofilename, image, glyphs):
+def write_sfd(ofilename, fontname, image, glyphs):
     ofile = file(ofilename, 'w')
-    font_name = 'dummy'
-    full_name = 'dummy'
-    family_name = 'dummy'
+    font_name = fontname
+    full_name = fontname
+    family_name = fontname
     num_letters = len(glyphs)
     scale = calculate_scale(glyphs)
     
