@@ -308,7 +308,15 @@ class EditorWindow(QWidget):
         
     def generate_sfd(self):
         selected = self.get_selected_glyphs()
-        write_sfd(self.sfd_file, self.font_name, self.area.image, selected)
+        if len(selected) == 0:
+            QMessageBox.critical(self, "Error", "No glyphs selected, can not generate sfd file.\n")
+            return
+        try:
+            write_sfd(self.sfd_file, self.font_name, self.area.image, selected)
+        except Exception, e:
+            QMessageBox.critical(self, "Error", "Sfd generation failed:\n" + str(e))
+            return
+            
         QMessageBox.information(self, "Success", "Sfd file successfully generated.")
         
 def start_program():
