@@ -87,24 +87,6 @@ def calculate_letter_boxes(image, xstrips):
             boxes.append(box)
     return boxes
 
-
-class LetterBox():
-    def __init__(self, rectangle):
-        self.r = rectangle
-        self.taken = False
-    
-    def contains(self, x, y):
-        return self.r.contains(x, y)
-
-class GlyphInfo():
-    def __init__(self, name, codepoint):
-        self.name = name
-        self.codepoint = codepoint
-        self.box = None
-
-def data_to_glyphinfo(data):
-    return GlyphInfo(data[0], data[1])
-
 class SelectionArea(QWidget):
     def __init__(self, image_file, master_widget, parent = None):
         QWidget.__init__(self, parent)

@@ -100,6 +100,25 @@ letter_footer = """EndSplineSet
 EndChar
 """
 
+
+class LetterBox():
+    def __init__(self, rectangle):
+        self.r = rectangle
+        self.taken = False
+    
+    def contains(self, x, y):
+        return self.r.contains(x, y)
+
+class GlyphInfo():
+    def __init__(self, name, codepoint):
+        self.name = name
+        self.codepoint = codepoint
+        self.box = None
+
+def data_to_glyphinfo(data):
+    return GlyphInfo(data[0], data[1])
+
+
 def integerise(command_line):
     return [int(x) for x in command_line.split()[0:-1]]
     
