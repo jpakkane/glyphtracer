@@ -44,8 +44,8 @@ Version: 001.000
 ItalicAngle: 0
 UnderlinePosition: -100
 UnderlineWidth: 50
-Ascent: 800
-Descent: 200
+Ascent: %d
+Descent: %d
 LayerCount: 2
 Layer: 0 0 "Back"  1
 Layer: 1 0 "Fore"  0
@@ -100,6 +100,13 @@ letter_footer = """EndSplineSet
 EndChar
 """
 
+# Numerical constants
+total_height = 2048 # By convention on Opentype Fonts
+ascent = 1638
+descent= total_height - ascent
+height_ratio = 0.9
+highest_y_coordinate = height_ratio * ascent
+potrace_pixel_multiplier = 10
 
 class LetterBox():
     def __init__(self, rectangle):
@@ -212,7 +219,10 @@ def flip_curve(curve):
         flipped.append(newp)
     return flipped
 
-def process_glyph(ofile, image, glyph):
+def pointlist_to_str(points, scale):
+    return ' '.join([str(scale*p) for p in points])
+
+def process_glyph(ofile, image, glyph, scale):
     width = 672
     location3 = 0
     ofile.write(letter_header % (glyph.name, glyph.codepoint, glyph.codepoint, location3, width))
@@ -220,12 +230,13 @@ def process_glyph(ofile, image, glyph):
     for curve in points:
         fp = curve[0]
         assert(len(fp) == 2)
-        ofile.write("%d %d m 0\n" % tuple(fp))
+        ofile.write(pointlist_to_str(fp, scale))
+        ofile.write(" m 0\n")
 
         for i in xrange(1, len(curve)):
             point = curve[i]
             ofile.write(' ')
-            ofile.write(' '.join([str(x) for x in point]))
+            ofile.write(pointlist_to_str(point, scale))
             # Print move commands.
             if len(point) == 6:
                 if i < len(curve)-1 and len(curve[i+1]) == 2:
@@ -244,15 +255,27 @@ def process_glyph(ofile, image, glyph):
     ofile.write(letter_footer)
     
 
+def max_y(glyphs):
+    """Return the the height of the tallest letter box."""
+    return reduce(lambda x, y: max(x, y.box.r.height()), glyphs, 0)
+
+def calculate_scale(glyphs):
+    """Calculate multiplier to convert potrace's coordinates
+    to font coordinates."""
+    highest_box = max_y(glyphs)
+    return highest_y_coordinate/(potrace_pixel_multiplier*highest_box)
+
 def write_sfd(ofilename, image, glyphs):
     ofile = file(ofilename, 'w')
     font_name = 'dummy'
     full_name = 'dummy'
     family_name = 'dummy'
     num_letters = len(glyphs)
-    ofile.write(sfd_header % (font_name, full_name, family_name, num_letters))
+    scale = calculate_scale(glyphs)
+    
+    ofile.write(sfd_header % (font_name, full_name, family_name, ascent, descent, num_letters))
 
     for glyph in glyphs:
-        process_glyph(ofile, image, glyph)
+        process_glyph(ofile, image, glyph, scale)
     
     ofile.write(sfd_footer)
