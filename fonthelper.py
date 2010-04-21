@@ -224,6 +224,8 @@ class EditorWindow(QWidget):
         self.font_name = font_name
         self.sfd_file = sfd_file
         
+        self.setWindowTitle('Fonthelper: ' + image_file)
+        
         self.grid = QGridLayout()
         self.area = SelectionArea(image_file, self)
         sa = QScrollArea()
@@ -317,6 +319,7 @@ def start_program():
         start_dialog = StartDialog(sys.argv[1])
     else:
         start_dialog = StartDialog()
+    start_dialog.setWindowTitle('Fonthelper')
     start_dialog.show()
     sys.exit(app.exec_())
 
