@@ -23,15 +23,36 @@ import os, subprocess, tempfile
 
 # These are read only lists that define different glyph groups.
 # In the future they may be parsed from a conf file.
-lowercase_list = [('a', 97), ('b', 98), ('c', 99), ('d', 100), ('e', 101), ('f', 102),\
+latin_lowercase_list = [('a', 97), ('b', 98), ('c', 99), ('d', 100), ('e', 101), ('f', 102),\
                   ('g', 103), ('h', 104), ('i', 105), ('j', 106), ('k', 107), ('l', 108),\
                   ('m', 109), ('n', 110), ('o', 111), ('p', 112), ('q', 113), ('r', 114),\
                   ('s', 115), ('t', 116), ('u', 117), ('v', 118), ('w', 119), ('x', 120),\
                   ('y', 121), ('z', 122)]
+
+latin_uppercase_list = [(x[0].upper(), x[1]-32) for x in latin_lowercase_list]
+
 number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 52), ('five', 52),\
                ('six', 53), ('seven', 54), ('eight', 55), ('nine', 56)]
 
-glyph_groups = [('lowercase', lowercase_list), ('numbers', number_list)]
+punctuation_list = [('exclam', 33), ('exclamdown', 161), ('question', 63), ('questiondown', 191),\
+                    ('period', 46), ('comma', 44), ('colon', 58), ('semicolon', 59),\
+                    ('slash', 47), ('backslash', 97), ('hyphen', 45), ('underscore', 95),\
+                    ('endash', 8211), ('emdash', 8212), ('ellipsis', 8230)]
+
+brackets_list = [('parenleft', 40), ('parenright', 41), ('bracketleft', 91), ('bracketright', 93),\
+                 ('braceleft', 123), ('braceright', 125), ('less', 60), ('greater', 62)]
+
+quotation_list = [('quotesingle', 39,), ('quotedbl', 34), ('quoteleft', 8216), ('quoteright', 8217),\
+                  ('quotesinglbase', 8218), ('quotedblleft', 8220), ('quotedblright', 8221),\
+                  ('quotedblbase', 8222), ('guillemotleft', 171), ('guillemotright', 187),\
+                  ('guilsinglleft', 8249), ('guilsinglright', 8250),]
+
+glyph_groups = [('latin lower case', latin_lowercase_list),\
+                ('latin upper case', latin_uppercase_list),\
+                ('numbers', number_list),\
+                ('brackets', brackets_list),\
+                ('punctuation', punctuation_list),\
+                ('quotation', quotation_list)]
 
 sfd_header = """SplineFontDB: 3.0
 FontName: %s
