@@ -25,8 +25,6 @@ from gtlib import *
 start_dialog = None
 main_win = None
 
-#from editor import Ui_MainWindow
-
 def is_image_file_valid(fname):
     im = QImage(fname)
     if im.isNull() or im.depth() != 1:
