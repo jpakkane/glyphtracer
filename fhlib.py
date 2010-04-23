@@ -144,6 +144,11 @@ class GlyphInfo():
         self.codepoint = codepoint
         self.box = None
 
+def i_haz_potrace():
+    p = subprocess.Popen('potrace -h', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p.wait()
+    return p.returncode == 0
+
 def data_to_glyphinfo(data):
     return GlyphInfo(data[0], data[1])
 

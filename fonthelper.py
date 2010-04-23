@@ -322,7 +322,9 @@ class EditorWindow(QWidget):
 def start_program():
     global start_dialog
     app = QApplication(sys.argv)
-    #myapp = SelectionArea(sys.argv[1])
+    if not i_haz_potrace():
+        QMessageBox.critical(None, "Fonthelper: Potrace not found", "Potrace executable not in path, exiting.")
+        sys.exit(127)
     if len(sys.argv) > 1:
         start_dialog = StartDialog(sys.argv[1])
     else:
