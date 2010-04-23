@@ -196,7 +196,7 @@ class StartDialog(QWidget):
         try:
             f = file(fname, 'r')
             return True
-        except IOException:
+        except IOError:
             return False
     
     def start_edit(self):
@@ -264,7 +264,6 @@ class EditorWindow(QWidget):
                 oldbox.taken = False
             self.glyphlist[self.active_glyph].box = newbox
             self.go_to_next_glyph() 
-            self.area.repaint()
         
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Space:
@@ -272,7 +271,6 @@ class EditorWindow(QWidget):
         else:
             forward = False
         self.go_to_next_glyph(forward)
-        self.area.repaint()
         
     def go_to_next_glyph(self, forward=True):
         if forward:
@@ -281,13 +279,18 @@ class EditorWindow(QWidget):
             shift = -1
         gs = len(self.glyphlist)
         self.active_glyph = (self.active_glyph + shift + gs) % gs
-        self.set_glyph_info()
-        self.area.set_active_box(self.glyphlist[self.active_glyph].box)
+        self.glyph_info_changed()
         
     def glyph_set_changed(self, i):
         self.active_glyph = 0
         self.glyphlist = self.groups[str(self.combo.currentText())]
+        self.glyph_info_changed()
+
+    def glyph_info_changed(self):
         self.set_glyph_info()
+        self.area.set_active_box(self.glyphlist[self.active_glyph].box)
+        self.area.repaint()
+        
         
     def set_glyph_info(self):
         self.glyph_label.setText(self.glyphlist[self.active_glyph].name)
@@ -323,7 +326,7 @@ def start_program():
     global start_dialog
     app = QApplication(sys.argv)
     if not i_haz_potrace():
-        QMessageBox.critical(None, "Fonthelper: Potrace not found", "Potrace executable not in path, exiting.")
+        QMessageBox.critical(None, "Fonthelper", "Potrace executable not in path, exiting.")
         sys.exit(127)
     if len(sys.argv) > 1:
         start_dialog = StartDialog(sys.argv[1])
