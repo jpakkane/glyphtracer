@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#    Fonthelper
+#    Glyphtracer
 #    Copyright (C) 2010 Jussi Pakkanen
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Fonthelper library files and stuff
+# Glyphtracer library files and stuff
 
 import os, subprocess, tempfile
 
-program_name = 'Fonthelper'
+program_name = 'Glyphtracer'
 
 # These are read only lists that define different glyph groups.
 # In the future they may be parsed from a conf file.

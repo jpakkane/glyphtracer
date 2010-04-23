@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#    Fonthelper
+#    Glyphtracer
 #    Copyright (C) 2010 Jussi Pakkanen
 #
 #    This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 import os, sys
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from fhlib import *
+from gtlib import *
 
 start_dialog = None
 main_win = None
