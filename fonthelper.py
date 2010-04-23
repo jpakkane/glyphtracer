@@ -190,7 +190,7 @@ class StartDialog(QWidget):
         self.output_edit.setText('.'.join(parts))
     
     def about_message(self):
-        QMessageBox.information(self, "About Fonthelper", "Fonthelper is (C) 2010 Jussi Pakkanen.\nIt is available under the Gnu General Public License v3 or later..")
+        QMessageBox.information(self, "About " + program_name, program_name + " is (C) 2010 Jussi Pakkanen.\nIt is available under the Gnu General Public License v3 or later..")
     
     def does_file_exist(self, fname):
         try:
@@ -224,7 +224,7 @@ class EditorWindow(QWidget):
         self.font_name = font_name
         self.sfd_file = sfd_file
         
-        self.setWindowTitle('Fonthelper: ' + image_file)
+        self.setWindowTitle(program_name + ': ' + image_file)
         
         self.grid = QGridLayout()
         self.area = SelectionArea(image_file, self)
@@ -326,13 +326,13 @@ def start_program():
     global start_dialog
     app = QApplication(sys.argv)
     if not i_haz_potrace():
-        QMessageBox.critical(None, "Fonthelper", "Potrace executable not in path, exiting.")
+        QMessageBox.critical(None, program_name, "Potrace executable not in path, exiting.")
         sys.exit(127)
     if len(sys.argv) > 1:
         start_dialog = StartDialog(sys.argv[1])
     else:
         start_dialog = StartDialog()
-    start_dialog.setWindowTitle('Fonthelper')
+    start_dialog.setWindowTitle(program_name)
     start_dialog.show()
     sys.exit(app.exec_())
 

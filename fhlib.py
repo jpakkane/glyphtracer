@@ -21,6 +21,8 @@
 
 import os, subprocess, tempfile
 
+program_name = 'Fonthelper'
+
 # These are read only lists that define different glyph groups.
 # In the future they may be parsed from a conf file.
 latin_lowercase_list = [('a', 97), ('b', 98), ('c', 99), ('d', 100), ('e', 101), ('f', 102),\
@@ -55,18 +57,18 @@ glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('quotation', quotation_list)]
 
 sfd_header = """SplineFontDB: 3.0
-FontName: %s
-FullName: %s
-FamilyName: %s
+FontName: %%s
+FullName: %%s
+FamilyName: %%s
 Weight: Medium
-Copyright: Originally scanned with FontHelper
+Copyright: Originally traced with %s
 UComments: "No comments" 
 Version: 001.000
 ItalicAngle: 0
 UnderlinePosition: -100
 UnderlineWidth: 50
-Ascent: %d
-Descent: %d
+Ascent: %%d
+Descent: %%d
 LayerCount: 2
 Layer: 0 0 "Back"  1
 Layer: 1 0 "Fore"  0
@@ -99,9 +101,9 @@ DisplaySize: -36
 AntiAlias: 1
 FitToEm: 1
 WinInfo: 57 19 19
-BeginChars: 65536 %d
+BeginChars: 65536 %%d
 
-"""
+""" % program_name
 
 sfd_footer = """EndChars
 EndSplineFont
