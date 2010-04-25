@@ -39,7 +39,7 @@ number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 5
 punctuation_list = [('exclam', 33), ('exclamdown', 161), ('question', 63), ('questiondown', 191),\
                     ('period', 46), ('comma', 44), ('colon', 58), ('semicolon', 59),\
                     ('slash', 47), ('backslash', 97), ('hyphen', 45), ('underscore', 95),\
-                    ('endash', 8211), ('emdash', 8212), ('ellipsis', 8230)]
+                    ('endash', 8211), ('emdash', 8212), ('ellipsis', 8230), ('periodcenter', 183)]
 
 brackets_list = [('parenleft', 40), ('parenright', 41), ('bracketleft', 91), ('bracketright', 93),\
                  ('braceleft', 123), ('braceright', 125), ('less', 60), ('greater', 62)]
@@ -49,12 +49,20 @@ quotation_list = [('quotesingle', 39,), ('quotedbl', 34), ('quoteleft', 8216), (
                   ('quotedblbase', 8222), ('guillemotleft', 171), ('guillemotright', 187),\
                   ('guilsinglleft', 8249), ('guilsinglright', 8250),]
 
+symbol_list = [('numbersign', 35), ('percent', 37), ('ampersand', 38), ('asterisk', 42),\
+               ('plus', 43), ('multiply', 215), ('divide', 247), ('equal', 61), ('at', 64),\
+               ('underscore', 95), ('copyright', 169), ('registered', 174),\
+               ('trademark', 8482), ('paragraph', 182), ('brokenbar', 166)]
+
+
+
 glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('latin upper case', latin_uppercase_list),\
                 ('numbers', number_list),\
                 ('brackets', brackets_list),\
                 ('punctuation', punctuation_list),\
-                ('quotation', quotation_list)]
+                ('quotation', quotation_list),\
+                ('symbols', symbol_list)]
 
 sfd_header = """SplineFontDB: 3.0
 FontName: %%s
