@@ -51,10 +51,11 @@ quotation_list = [('quotesingle', 39,), ('quotedbl', 34), ('quoteleft', 8216), (
 
 symbol_list = [('numbersign', 35), ('percent', 37), ('ampersand', 38), ('asterisk', 42),\
                ('plus', 43), ('multiply', 215), ('divide', 247), ('equal', 61), ('at', 64),\
-               ('underscore', 95), ('copyright', 169), ('registered', 174),\
-               ('trademark', 8482), ('paragraph', 182), ('brokenbar', 166)]
+               ('underscore', 95), ('asciitilde', 126), ('copyright', 169), ('registered', 174),\
+               ('trademark', 8482), ('paragraph', 182), ('section', 167), ('brokenbar', 166)]
 
-
+currency_list = [('dollar', 36), ('cent', 162), ('euro', 8364), ('sterling', 163),\
+                 ('yen', 165), ('currency', 164)]
 
 glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('latin upper case', latin_uppercase_list),\
@@ -62,7 +63,8 @@ glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('brackets', brackets_list),\
                 ('punctuation', punctuation_list),\
                 ('quotation', quotation_list),\
-                ('symbols', symbol_list)]
+                ('symbols', symbol_list),\
+                ('currency', currency_list)]
 
 sfd_header = """SplineFontDB: 3.0
 FontName: %%s
