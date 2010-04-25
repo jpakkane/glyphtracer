@@ -33,6 +33,21 @@ latin_lowercase_list = [('a', 97), ('b', 98), ('c', 99), ('d', 100), ('e', 101),
 
 latin_uppercase_list = [(x[0].upper(), x[1]-32) for x in latin_lowercase_list]
 
+latin_accented_lower_list = [('agrave', 224), ('aacute', 225), ('acircumflex', 226),\
+                             ('atilde', 227), ('adieresis', 228), ('aring', 229),\
+                             ('egrave', 232), ('eacute', 233), ('ecircumflex', 234),\
+                             ('edieresis', 235), ('igrave', 236), ('iacute', 237),\
+                             ('icircumflex', 238), ('idieresis', 239), ('ntilde', 241),\
+                             ('ograve', 242), ('oacute', 243), ('ocircumflex', 244),\
+                             ('otilde', 245), ('odieresis', 246), ('ugrave', 249),\
+                             ('uacute', 250), ('ucircumflex', 251), ('udieresis', 252),\
+                             ('yacute', 253), ('ydieresis', 255)]
+
+# This is a bit tricky, since capital Y dieresis is not at the same difference from its
+# lower case version.
+latin_accented_upper_list = [(x[0].capitalize(), x[1]-32) for x in latin_accented_lower_list[:-1]] \
++ [('Ydieresis', 376)]
+
 number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 52), ('five', 52),\
                ('six', 53), ('seven', 54), ('eight', 55), ('nine', 56)]
 
@@ -59,6 +74,8 @@ currency_list = [('dollar', 36), ('cent', 162), ('euro', 8364), ('sterling', 163
 
 glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('latin upper case', latin_uppercase_list),\
+                ('latin accented lower case', latin_accented_lower_list),\
+                ('latin accented upper case', latin_accented_upper_list),\
                 ('numbers', number_list),\
                 ('brackets', brackets_list),\
                 ('punctuation', punctuation_list),\
