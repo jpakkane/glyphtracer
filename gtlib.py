@@ -23,6 +23,10 @@ import os, subprocess, tempfile
 
 program_name = 'Glyphtracer'
 
+def entry_to_upper(e):
+    return (e[0].capitalize(), e[1]-32)
+
+
 # These are read only lists that define different glyph groups.
 # In the future they may be parsed from a conf file.
 latin_lowercase_list = [('a', 97), ('b', 98), ('c', 99), ('d', 100), ('e', 101), ('f', 102),\
@@ -31,7 +35,7 @@ latin_lowercase_list = [('a', 97), ('b', 98), ('c', 99), ('d', 100), ('e', 101),
                   ('s', 115), ('t', 116), ('u', 117), ('v', 118), ('w', 119), ('x', 120),\
                   ('y', 121), ('z', 122)]
 
-latin_uppercase_list = [(x[0].upper(), x[1]-32) for x in latin_lowercase_list]
+latin_uppercase_list = [entry_to_upper(x) for x in latin_lowercase_list]
 
 latin_accented_lower_list = [('agrave', 224), ('aacute', 225), ('acircumflex', 226),\
                              ('atilde', 227), ('adieresis', 228), ('aring', 229),\
@@ -45,8 +49,13 @@ latin_accented_lower_list = [('agrave', 224), ('aacute', 225), ('acircumflex', 2
 
 # This is a bit tricky, since capital Y dieresis is not at the same difference from its
 # lower case version.
-latin_accented_upper_list = [(x[0].capitalize(), x[1]-32) for x in latin_accented_lower_list[:-1]] \
+latin_accented_upper_list = [entry_to_upper(x) for x in latin_accented_lower_list[:-1]] \
 + [('Ydieresis', 376)]
+
+latin_extra_lower_list = [('ae', 230), ('ccedilla', 231), ('eth', 240),\
+                          ('oslash', 248), ('thorn', 254), ('germandbls', 223)]
+
+latin_extra_upper_list = [entry_to_upper(x) for x in latin_extra_lower_list[:-1]] 
 
 number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 52), ('five', 52),\
                ('six', 53), ('seven', 54), ('eight', 55), ('nine', 56)]
@@ -76,6 +85,8 @@ glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('latin upper case', latin_uppercase_list),\
                 ('latin accented lower case', latin_accented_lower_list),\
                 ('latin accented upper case', latin_accented_upper_list),\
+                ('latin extra lower case', latin_extra_lower_list),
+                ('latin extra upper case', latin_extra_upper_list),
                 ('numbers', number_list),\
                 ('brackets', brackets_list),\
                 ('punctuation', punctuation_list),\
