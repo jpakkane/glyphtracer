@@ -62,7 +62,7 @@ number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 5
 
 punctuation_list = [('exclam', 33), ('exclamdown', 161), ('question', 63), ('questiondown', 191),\
                     ('period', 46), ('comma', 44), ('colon', 58), ('semicolon', 59),\
-                    ('slash', 47), ('backslash', 97), ('hyphen', 45), ('underscore', 95),\
+                    ('slash', 47), ('backslash', 92), ('hyphen', 45), ('underscore', 95),\
                     ('endash', 8211), ('emdash', 8212), ('ellipsis', 8230), ('periodcenter', 183)]
 
 brackets_list = [('parenleft', 40), ('parenright', 41), ('bracketleft', 91), ('bracketright', 93),\
@@ -75,7 +75,7 @@ quotation_list = [('quotesingle', 39,), ('quotedbl', 34), ('quoteleft', 8216), (
 
 symbol_list = [('numbersign', 35), ('percent', 37), ('ampersand', 38), ('asterisk', 42),\
                ('plus', 43), ('multiply', 215), ('divide', 247), ('equal', 61), ('at', 64),\
-               ('underscore', 95), ('asciitilde', 126), ('copyright', 169), ('registered', 174),\
+               ('asciitilde', 126), ('copyright', 169), ('registered', 174),\
                ('trademark', 8482), ('paragraph', 182), ('section', 167), ('brokenbar', 166)]
 
 currency_list = [('dollar', 36), ('cent', 162), ('euro', 8364), ('sterling', 163),\
