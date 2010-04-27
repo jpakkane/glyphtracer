@@ -239,6 +239,7 @@ class EditorWindow(QWidget):
         
         self.grid.addWidget(QLabel('Glyph:'), 1, 3, 1, 1)
         self.glyph_label = QLabel()
+        self.glyph_label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.grid.addWidget(self.glyph_label, 1, 4, 1, 1)
         self.save = QPushButton('Generate SFD file')
         self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
