@@ -291,7 +291,9 @@ class EditorWindow(QWidget):
         
         
     def set_glyph_info(self):
-        self.glyph_label.setText(self.glyphlist[self.active_glyph].name)
+        g = self.glyphlist[self.active_glyph]
+        text = u'%s (%s)' % (unicode(g.name), unichr(g.codepoint))
+        self.glyph_label.setText(text)
         
     def unselect(self, box):
         box.taken = False
