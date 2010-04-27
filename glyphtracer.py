@@ -228,7 +228,7 @@ class EditorWindow(QWidget):
         self.area = SelectionArea(image_file, self)
         sa = QScrollArea()
         sa.setWidget(self.area)
-        self.grid.addWidget(sa, 0, 0, 1, 6)
+        self.grid.addWidget(sa, 0, 0, 1, 5)
         
         b = QPushButton('Previous glyph')
         self.connect(b, SIGNAL('clicked()'), self.previous_button)
@@ -238,13 +238,11 @@ class EditorWindow(QWidget):
         self.grid.addWidget(b, 1, 2, 1, 1)
         
         self.glyph_text = QLabel('Glyph:')
+        self.glyph_text.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.grid.addWidget(self.glyph_text, 1, 3, 1, 1)
-        self.glyph_label = QLabel()
-        self.glyph_label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-        self.grid.addWidget(self.glyph_label, 1, 4, 1, 1)
         self.save = QPushButton('Generate SFD file')
         self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
-        self.grid.addWidget(self.save, 1, 5, 1, 1)
+        self.grid.addWidget(self.save, 1, 4, 1, 1)
         
         self.combo = QComboBox()
         self.build_combo()
@@ -306,11 +304,10 @@ class EditorWindow(QWidget):
         
         
     def set_glyph_info(self):
-        header_text = u'Glyph %d/%d: ' % (self.active_glyph+1, len(self.glyphlist))
-        self.glyph_text.setText(header_text)
         g = self.glyphlist[self.active_glyph]
-        info_text = u'%s (%s)' % (unicode(g.name), unichr(g.codepoint))
-        self.glyph_label.setText(info_text)
+        info_text = u'Glyph %d/%d: %s (%s)' % \
+        (self.active_glyph+1, len(self.glyphlist), unicode(g.name), unichr(g.codepoint))
+        self.glyph_text.setText(info_text)
         
     def unselect(self, box):
         box.taken = False
