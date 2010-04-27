@@ -237,7 +237,8 @@ class EditorWindow(QWidget):
         self.connect(b, SIGNAL('clicked()'), self.next_button)
         self.grid.addWidget(b, 1, 2, 1, 1)
         
-        self.grid.addWidget(QLabel('Glyph:'), 1, 3, 1, 1)
+        self.glyph_text = QLabel('Glyph:')
+        self.grid.addWidget(self.glyph_text, 1, 3, 1, 1)
         self.glyph_label = QLabel()
         self.glyph_label.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.grid.addWidget(self.glyph_label, 1, 4, 1, 1)
@@ -305,9 +306,11 @@ class EditorWindow(QWidget):
         
         
     def set_glyph_info(self):
+        header_text = u'Glyph %d/%d: ' % (self.active_glyph+1, len(self.glyphlist))
+        self.glyph_text.setText(header_text)
         g = self.glyphlist[self.active_glyph]
-        text = u'%s (%s)' % (unicode(g.name), unichr(g.codepoint))
-        self.glyph_label.setText(text)
+        info_text = u'%s (%s)' % (unicode(g.name), unichr(g.codepoint))
+        self.glyph_label.setText(info_text)
         
     def unselect(self, box):
         box.taken = False
