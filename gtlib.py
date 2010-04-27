@@ -57,8 +57,8 @@ latin_extra_lower_list = [('ae', 230), ('ccedilla', 231), ('eth', 240),\
 
 latin_extra_upper_list = [entry_to_upper(x) for x in latin_extra_lower_list[:-1]] 
 
-number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 52), ('five', 52),\
-               ('six', 53), ('seven', 54), ('eight', 55), ('nine', 56)]
+number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 52), ('five', 53),\
+               ('six', 54), ('seven', 55), ('eight', 56), ('nine', 57)]
 
 punctuation_list = [('exclam', 33), ('exclamdown', 161), ('question', 63), ('questiondown', 191),\
                     ('period', 46), ('comma', 44), ('colon', 58), ('semicolon', 59),\
