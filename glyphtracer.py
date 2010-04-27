@@ -216,7 +216,7 @@ class StartDialog(QWidget):
 class EditorWindow(QWidget):
     def __init__(self, image_file, font_name, sfd_file, parent=None):
         QWidget.__init__(self)
-        self.resize(512, 400)
+        self.resize(640, 400)
         self.active_glyph = 0
         self.glyphlist = []
         self.font_name = font_name
@@ -228,14 +228,21 @@ class EditorWindow(QWidget):
         self.area = SelectionArea(image_file, self)
         sa = QScrollArea()
         sa.setWidget(self.area)
-        self.grid.addWidget(sa, 0, 0, 1, 4)
+        self.grid.addWidget(sa, 0, 0, 1, 6)
         
-        self.grid.addWidget(QLabel('Glyph:'), 1, 1, 1, 1)
+        b = QPushButton('Previous glyph')
+        self.connect(b, SIGNAL('clicked()'), self.previous_button)
+        self.grid.addWidget(b, 1, 1, 1, 1)
+        b = QPushButton('Next glyph')
+        self.connect(b, SIGNAL('clicked()'), self.next_button)
+        self.grid.addWidget(b, 1, 2, 1, 1)
+        
+        self.grid.addWidget(QLabel('Glyph:'), 1, 3, 1, 1)
         self.glyph_label = QLabel()
-        self.grid.addWidget(self.glyph_label, 1, 2, 1, 1)
+        self.grid.addWidget(self.glyph_label, 1, 4, 1, 1)
         self.save = QPushButton('Generate SFD file')
         self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
-        self.grid.addWidget(self.save, 1, 3, 1, 1)
+        self.grid.addWidget(self.save, 1, 5, 1, 1)
         
         self.combo = QComboBox()
         self.build_combo()
@@ -269,6 +276,12 @@ class EditorWindow(QWidget):
         else:
             forward = False
         self.go_to_next_glyph(forward)
+        
+    def next_button(self):
+        self.go_to_next_glyph(True)
+    
+    def previous_button(self):
+        self.go_to_next_glyph(False)
         
     def go_to_next_glyph(self, forward=True):
         if forward:
