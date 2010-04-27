@@ -26,6 +26,12 @@ program_name = 'Glyphtracer'
 def entry_to_upper(e):
     return (e[0].capitalize(), e[1]-32)
 
+# The format of letter lists is as follows:
+#
+# Each element is a tuple. The first element is a string with the
+# glyph's name *as used by Fontforge*. Not the unicode name
+# or anything else. It is always in pure ASCII. The
+# second element is the corresponding Unicode code point.
 
 # These are read only lists that define different glyph groups.
 # In the future they may be parsed from a conf file.
