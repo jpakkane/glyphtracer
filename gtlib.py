@@ -76,7 +76,8 @@ quotation_list = [('quotesingle', 39,), ('quotedbl', 34), ('quoteleft', 8216), (
 symbol_list = [('numbersign', 35), ('percent', 37), ('ampersand', 38), ('asterisk', 42),\
                ('plus', 43), ('multiply', 215), ('divide', 247), ('equal', 61), ('at', 64),\
                ('asciitilde', 126), ('copyright', 169), ('registered', 174),\
-               ('trademark', 8482), ('paragraph', 182), ('section', 167), ('brokenbar', 166)]
+               ('trademark', 8482), ('paragraph', 182), ('section', 167), ('brokenbar', 166),\
+               ('uniFFFD', 65533)]
 
 currency_list = [('dollar', 36), ('cent', 162), ('euro', 8364), ('sterling', 163),\
                  ('yen', 165), ('currency', 164)]
