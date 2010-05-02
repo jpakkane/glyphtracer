@@ -20,11 +20,19 @@
 from distutils.core import setup
 import gtlib
 
-setup(name = gtlib.program_name,
+setup(name = gtlib.program_name.lower(),
       version = gtlib.program_version,
       description='A tool for vectorising letters',
       author='Jussi Pakkanen',
       author_email='jpakkane gmail',
       url='https://launchpad.net/glyphtracer',
-      py_modules = ['glyphtracer', 'gtlib']
+      py_modules = ['glyphtracer', 'gtlib'],
+      classifiers = ['License :: OSI Approved :: GNU General Public License (GPL)',
+                     'Topic :: Multimedia :: Graphics :: Editors :: Vector-Based',
+                     'Topic :: Text Processing :: Fonts',
+                     'Environment :: X11 Applications :: Qt',
+                     'Intended Audience :: End Users/Desktop',
+                     'Operating System :: OS Independent',
+                     'Programming Language :: Python :: 2',
+                     ]
       )
