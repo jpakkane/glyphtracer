@@ -188,7 +188,9 @@ class StartDialog(QWidget):
         self.output_edit.setText('.'.join(parts))
     
     def about_message(self):
-        QMessageBox.information(self, "About " + program_name, program_name + " is (C) 2010 Jussi Pakkanen.\nIt is available under the Gnu General Public License v3 or later..")
+        QMessageBox.information(self, "About " + program_name, 
+                                program_name + ' ' + program_version + \
+                                "\n(C) 2010 Jussi Pakkanen.\nThis program is available under the Gnu General Public License v3 or later.")
     
     def does_file_exist(self, fname):
         try:

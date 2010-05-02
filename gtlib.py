@@ -22,6 +22,7 @@
 import os, subprocess, tempfile
 
 program_name = 'Glyphtracer'
+program_version = '1.0'
 
 def entry_to_upper(e):
     return (e[0].capitalize(), e[1]-32)
