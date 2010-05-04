@@ -338,14 +338,14 @@ class EditorWindow(QWidget):
             
         QMessageBox.information(self, "Success", "Sfd file successfully generated.")
         
-def start_program():
+def start_program(arguments):
     global start_dialog
-    app = QApplication(sys.argv)
+    app = QApplication(arguments)
     if not i_haz_potrace():
         QMessageBox.critical(None, program_name, "Potrace executable not in path, exiting.")
         sys.exit(127)
-    if len(sys.argv) > 1:
-        start_dialog = StartDialog(sys.argv[1])
+    if len(arguments) > 1:
+        start_dialog = StartDialog(arguments[1])
     else:
         start_dialog = StartDialog()
     start_dialog.setWindowTitle(program_name)
@@ -359,5 +359,5 @@ def test_edwin():
     sys.exit(app.exec_())
     
 if __name__ == "__main__":
-    start_program()
+    start_program(sys.argv)
     #test_edwin()
