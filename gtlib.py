@@ -53,15 +53,17 @@ latin_accented_lower_list = [('agrave', 224), ('aacute', 225), ('acircumflex', 2
                              ('uacute', 250), ('ucircumflex', 251), ('udieresis', 252),\
                              ('yacute', 253), ('ydieresis', 255)]
 
-# This is a bit tricky, since capital Y dieresis is not at the same difference from its
-# lower case version.
+# Most lower case letters are at a fixed distance from their upper case variants.
+# Some are not, thus some of these lists will appear a bit messy.
+
 latin_accented_upper_list = [entry_to_upper(x) for x in latin_accented_lower_list[:-1]] \
 + [('Ydieresis', 376)]
 
-latin_extra_lower_list = [('ae', 230), ('ccedilla', 231), ('eth', 240),\
-                          ('oslash', 248), ('thorn', 254), ('germandbls', 223)]
+latin_extra_lower_list = [('ccedilla', 231), ('eth', 240), ('oslash', 248),\
+                          ('thorn', 254), ('ae', 230), ('oe', 339), ('germandbls', 223)]
 
-latin_extra_upper_list = [entry_to_upper(x) for x in latin_extra_lower_list[:-1]] 
+latin_extra_upper_list = [entry_to_upper(x) for x in latin_extra_lower_list[:-3]]\
++ [('AE', 198), ('OE', 338)]
 
 number_list = [('zero', 48), ('one', 49), ('two', 50), ('three', 51), ('four', 52), ('five', 53),\
                ('six', 54), ('seven', 55), ('eight', 56), ('nine', 57)]
