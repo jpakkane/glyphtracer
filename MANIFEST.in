@@ -1,1 +1,2 @@
-include license.txt
+include license.txt COPYING
+include glyphtracer.desktop

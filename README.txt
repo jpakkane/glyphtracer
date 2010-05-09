@@ -31,3 +31,10 @@ of white. If this is not the case (because, for example, your image
 is tilted), detection will fail. Similarly letters on a single row
 have to be separated by vertical white space. Just give your letters 
 lots of "room" on all sides and everything will work.
+
+
+Contributors
+
+The following people have contributed to this project.
+
+Toshio Ernie Kuratomi
