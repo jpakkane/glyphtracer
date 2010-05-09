@@ -11,4 +11,4 @@ Type=Application
 #Icon=
 #MimeType=
 StartupNotify=true
-Categories=Qt;Application;Graphics;2DGraphics;VectorGraphics;RasterGraphics;
+Categories=Qt;Graphics;2DGraphics;VectorGraphics;RasterGraphics;
