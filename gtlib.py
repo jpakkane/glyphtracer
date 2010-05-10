@@ -139,7 +139,7 @@ HheadAscent: 0
 HheadAOffset: 1
 HheadDescent: 0
 HheadDOffset: 1
-OS2Vendor: 'FoHe'
+OS2Vendor: 'GlTr'
 DEI: 91125
 Encoding: UnicodeBmp
 UnicodeInterp: none
@@ -168,6 +168,7 @@ SplineSet
 
 letter_footer = """EndSplineSet
 EndChar
+
 """
 
 # Numerical constants
