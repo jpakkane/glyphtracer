@@ -179,7 +179,7 @@ highest_y_coordinate = height_ratio * ascent
 potrace_pixel_multiplier = 10
 rbearing = 150
 
-class LetterBox():
+class LetterBox(object):
     def __init__(self, rectangle):
         self.r = rectangle
         self.taken = False
@@ -187,7 +187,7 @@ class LetterBox():
     def contains(self, x, y):
         return self.r.contains(x, y)
 
-class GlyphInfo():
+class GlyphInfo(object):
     def __init__(self, name, codepoint):
         self.name = name
         self.codepoint = codepoint
