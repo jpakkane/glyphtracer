@@ -90,6 +90,18 @@ symbol_list = [('numbersign', 35), ('percent', 37), ('ampersand', 38), ('asteris
 currency_list = [('dollar', 36), ('cent', 162), ('euro', 8364), ('sterling', 163),\
                  ('yen', 165), ('currency', 164)]
 
+cyrillic_lower = [('afii10065', 1072), ('afii10066', 1073), ('afii10067', 1074),\
+                  ('afii10068', 1075), ('afii10069', 1076), ('afii10070', 1077),\
+                  ('afii10071', 1078), ('afii10072', 1079), ('afii10073', 1080),\
+                  ('afii10074', 1081), ('afii10075', 1082), ('afii10076', 1083),\
+                  ('afii10077', 1084), ('afii10078', 1085), ('afii10079', 1086),\
+                  ('afii10080', 1087), ('afii10081', 1088), ('afii10082', 1079),\
+                  ('afii10083', 1090), ('afii10084', 1091), ('afii10085', 1092),\
+                  ('afii10086', 1093), ('afii10087', 1094), ('afii10088', 1095),\
+                  ('afii10089', 1096), ('afii10090', 1097), ('afii10091', 1098),\
+                  ('afii10092', 1099), ('afii10093', 1100), ('afii10094', 1101),\
+                  ('afii10095', 1102), ('afii10096', 1103)]
+
 glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('latin upper case', latin_uppercase_list),\
                 ('latin accented lower case', latin_accented_lower_list),\
@@ -101,7 +113,8 @@ glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('punctuation', punctuation_list),\
                 ('quotation', quotation_list),\
                 ('symbols', symbol_list),\
-                ('currency', currency_list)]
+                ('currency', currency_list),\
+                ('cyrillic lowercase', cyrillic_lower)]
 
 sfd_header = """SplineFontDB: 3.0
 FontName: %%s
