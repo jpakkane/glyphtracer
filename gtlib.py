@@ -90,17 +90,29 @@ symbol_list = [('numbersign', 35), ('percent', 37), ('ampersand', 38), ('asteris
 currency_list = [('dollar', 36), ('cent', 162), ('euro', 8364), ('sterling', 163),\
                  ('yen', 165), ('currency', 164)]
 
-cyrillic_lower = [('afii10065', 1072), ('afii10066', 1073), ('afii10067', 1074),\
+cyrillic_lower = [('afii10017', 1040), ('afii10018', 1041), ('afii10019', 1042),\
+                  ('afii10020', 1043), ('afii10021', 1044), ('afii10022', 1045),\
+                  ('afii10024', 1046), ('afii10025', 1047), ('afii10026', 1048),\
+                  ('afii10027', 1049), ('afii10028', 1050), ('afii10029', 1051),\
+                  ('afii10030', 1052), ('afii10031', 1053), ('afii10032', 1054),\
+                  ('afii10033', 1055), ('afii10034', 1056), ('afii10035', 1057),\
+                  ('afii10036', 1058), ('afii10037', 1059), ('afii10038', 1060),\
+                  ('afii10039', 1061), ('afii10040', 1062), ('afii10041', 1063),\
+                  ('afii10042', 1064), ('afii10043', 1065), ('afii10044', 1066),\
+                  ('afii10045', 1067), ('afii10046', 1068), ('afii10047', 1169),\
+                  ('afii10048', 1070), ('afii10049', 1071)]
+
+cyrillic_upper = [('afii10065', 1072), ('afii10066', 1073), ('afii10067', 1074),\
                   ('afii10068', 1075), ('afii10069', 1076), ('afii10070', 1077),\
-                  ('afii10071', 1078), ('afii10072', 1079), ('afii10073', 1080),\
-                  ('afii10074', 1081), ('afii10075', 1082), ('afii10076', 1083),\
-                  ('afii10077', 1084), ('afii10078', 1085), ('afii10079', 1086),\
-                  ('afii10080', 1087), ('afii10081', 1088), ('afii10082', 1079),\
-                  ('afii10083', 1090), ('afii10084', 1091), ('afii10085', 1092),\
-                  ('afii10086', 1093), ('afii10087', 1094), ('afii10088', 1095),\
-                  ('afii10089', 1096), ('afii10090', 1097), ('afii10091', 1098),\
-                  ('afii10092', 1099), ('afii10093', 1100), ('afii10094', 1101),\
-                  ('afii10095', 1102), ('afii10096', 1103)]
+                  ('afii10072', 1078), ('afii10073', 1079), ('afii10073', 1080),\
+                  ('afii10075', 1081), ('afii10076', 1082), ('afii10077', 1083),\
+                  ('afii10078', 1084), ('afii10079', 1085), ('afii10080', 1086),\
+                  ('afii10081', 1087), ('afii10082', 1088), ('afii10083', 1089),\
+                  ('afii10084', 1090), ('afii10085', 1091), ('afii10086', 1092),\
+                  ('afii10089', 1093), ('afii10088', 1094), ('afii10089', 1095),\
+                  ('afii10090', 1096), ('afii10091', 1097), ('afii10092', 1098),\
+                  ('afii10093', 1099), ('afii10094', 1100), ('afii10095', 1101),\
+                  ('afii10096', 1102), ('afii10097', 1103)]
 
 glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('latin upper case', latin_uppercase_list),\
@@ -114,7 +126,8 @@ glyph_groups = [('latin lower case', latin_lowercase_list),\
                 ('quotation', quotation_list),\
                 ('symbols', symbol_list),\
                 ('currency', currency_list),\
-                ('cyrillic lowercase', cyrillic_lower)]
+                ('cyrillic lowercase', cyrillic_lower),\
+                ('cyrillic uppercase', cyrillic_upper)]
 
 sfd_header = """SplineFontDB: 3.0
 FontName: %%s
