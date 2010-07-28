@@ -207,6 +207,9 @@ class StartDialog(QWidget):
         if not self.is_image_file_valid(image):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
             return
+        if image.hasAlphaChannel():
+            QMessageBox.critical(self, "Error", "The image has transparency, which will interfere with tracing. Remove alpha channel and try again.")
+            return
         if self.does_file_exist(output):
             if QMessageBox.critical(self, "File exists", "Output file %s already exists." % output,\
                                        'Overwrite it', 'Select a different file') != 0:
