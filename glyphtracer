@@ -25,12 +25,6 @@ from gtlib import *
 start_dialog = None
 main_win = None
 
-def is_image_file_valid(fname):
-    im = QImage(fname)
-    if im.isNull() or im.depth() != 1:
-        return False
-    return True
-
 def calculate_horizontal_sums(image):
     (w, h) = (image.width(), image.height())
     sums = []
@@ -198,13 +192,19 @@ class StartDialog(QWidget):
             return True
         except IOError:
             return False
-    
+
+    def is_image_file_valid(self, fname):
+        im = QImage(fname)
+        if im.isNull() or im.depth() != 1:
+            return False
+        return True
+
     def start_edit(self):
         global main_win, start_dialog
         fname = self.file_edit.text()
         output = self.output_edit.text()
         font_name = self.name_edit.text()
-        if not is_image_file_valid(fname):
+        if not self.is_image_file_valid(fname):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
             return
         if self.does_file_exist(output):
