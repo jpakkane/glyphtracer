@@ -80,10 +80,10 @@ def calculate_letter_boxes(image, xstrips):
     return boxes
 
 class SelectionArea(QWidget):
-    def __init__(self, image_file, master_widget, parent = None):
+    def __init__(self, image, master_widget, parent = None):
         QWidget.__init__(self, parent)
         self.master = master_widget
-        self.image = QImage(image_file)
+        self.image = image
         self.resize(self.image.width(), self.image.height())
         
         strips = calculate_horizontal_sums(self.image)
@@ -193,8 +193,7 @@ class StartDialog(QWidget):
         except IOError:
             return False
 
-    def is_image_file_valid(self, fname):
-        im = QImage(fname)
+    def is_image_file_valid(self, im):
         if im.isNull() or im.depth() != 1:
             return False
         return True
@@ -204,7 +203,8 @@ class StartDialog(QWidget):
         fname = self.file_edit.text()
         output = self.output_edit.text()
         font_name = self.name_edit.text()
-        if not self.is_image_file_valid(fname):
+        image = QImage(fname)
+        if not self.is_image_file_valid(image):
             QMessageBox.critical(self, "Error", "Selected file is not a 1 bit image.")
             return
         if self.does_file_exist(output):
@@ -212,11 +212,11 @@ class StartDialog(QWidget):
                                        'Overwrite it', 'Select a different file') != 0:
                 return
         start_dialog.hide()
-        main_win = EditorWindow(fname, font_name, output)
+        main_win = EditorWindow(image, font_name, output)
         main_win.show()
 
 class EditorWindow(QWidget):
-    def __init__(self, image_file, font_name, sfd_file, parent=None):
+    def __init__(self, image, font_name, sfd_file, parent=None):
         QWidget.__init__(self)
         self.resize(640, 400)
         self.active_glyph = 0
@@ -224,10 +224,10 @@ class EditorWindow(QWidget):
         self.font_name = font_name
         self.sfd_file = sfd_file
         
-        self.setWindowTitle(program_name + ': ' + image_file)
+        self.setWindowTitle(program_name + ': ' + font_name)
         
         self.grid = QGridLayout()
-        self.area = SelectionArea(image_file, self)
+        self.area = SelectionArea(image, self)
         sa = QScrollArea()
         sa.setWidget(self.area)
         self.grid.addWidget(sa, 0, 0, 1, 5)
