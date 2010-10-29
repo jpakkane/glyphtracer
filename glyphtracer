@@ -25,14 +25,21 @@ from gtlib import *
 start_dialog = None
 main_win = None
 
-def calculate_horizontal_sums(image):
+def calculate_horizontal_sums(image, show_progress):
     (w, h) = (image.width(), image.height())
+    if show_progress:
+        prog = QProgressDialog("Vertical splitting", QString(), 0, h)
+        prog.show()
     sums = []
     for j in xrange(h):
         total = 0
         for i in xrange(w):
             total += image.pixelIndex(i, j)
         sums.append(total)
+        if show_progress:
+            prog.setValue(j)
+    if show_progress:
+        prog.hide()
     return sums
     
 def calculate_cutlines_locations(sums):
@@ -72,7 +79,7 @@ def calculate_letter_boxes(image, xstrips):
     for xs in xstrips:
         (y0, y1) = xs
         cur_image = image.copy(0, y0, w, y1-y0).transformed(rotate)
-        ystrips = calculate_cutlines_locations(calculate_horizontal_sums(cur_image))
+        ystrips = calculate_cutlines_locations(calculate_horizontal_sums(cur_image, False))
         for ys in ystrips:
             (x0, x1) = ys
             box = LetterBox(QRect(x0, y0, x1-x0, y1-y0))
@@ -86,7 +93,7 @@ class SelectionArea(QWidget):
         self.image = image
         self.resize(self.image.width(), self.image.height())
         
-        strips = calculate_horizontal_sums(self.image)
+        strips = calculate_horizontal_sums(self.image, True)
         hor_lines = calculate_cutlines_locations(strips)
         self.boxes = calculate_letter_boxes(self.image, hor_lines)
         self.active_box = None
@@ -361,6 +368,16 @@ def test_edwin():
     bob.show()
     sys.exit(app.exec_())
     
+def test_progress():
+    import time
+    app = QApplication(sys.argv)
+    prog = QProgressDialog("Testing progressbar", QString(), 0, 100)
+    prog.show()
+    for i in xrange(100):
+        time.sleep(0.1)
+        prog.setValue(i)
+    
 if __name__ == "__main__":
     start_program(sys.argv)
+    #test_progress()
     #test_edwin()
