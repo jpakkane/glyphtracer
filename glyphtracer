@@ -267,7 +267,7 @@ class EditorWindow(QWidget):
         self.area = SelectionArea(image, self)
         sa = QScrollArea()
         sa.setWidget(self.area)
-        self.grid.addWidget(sa, 0, 0, 1, 5)
+        self.grid.addWidget(sa, 0, 0, 1, 6)
         
         b = QPushButton('Previous glyph')
         self.connect(b, SIGNAL('clicked()'), self.previous_button)
@@ -281,12 +281,20 @@ class EditorWindow(QWidget):
         self.grid.addWidget(self.glyph_text, 1, 3, 1, 1)
         self.save = QPushButton('Generate SFD file')
         self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
-        self.grid.addWidget(self.save, 1, 4, 1, 1)
+        self.grid.addWidget(self.save, 1, 5, 1, 1)
         
         self.combo = QComboBox()
-        self.build_combo()
+        self.build_glyph_combo()
         self.connect(self.combo, SIGNAL('activated(int)'), self.glyph_set_changed)
         self.grid.addWidget(self.combo, 1, 0, 1, 1)
+
+        self.zoomlevel = QSpinBox()
+        self.zoomlevel.setMaximum(5)
+        self.zoomlevel.setMinimum(1)
+        self.zoomlevel.setSingleStep(1)
+        self.zoomlevel.setPrefix('Zoom level: ')
+        self.connect(self.zoomlevel, SIGNAL('valueChanged(int)'), self.zoom_changed)
+        self.grid.addWidget(self.zoomlevel, 1, 4, 1, 1)
         
         self.setLayout(self.grid)
         
@@ -302,7 +310,7 @@ class EditorWindow(QWidget):
         final_height = min(0.9*screen_height, h+100)
         self.resize(final_width, final_height)
         
-    def build_combo(self):
+    def build_glyph_combo(self):
         self.groups = {}
         for name, glyphs in glyph_groups:
             self.groups[name] = [data_to_glyphinfo(x) for x in glyphs]
@@ -320,6 +328,9 @@ class EditorWindow(QWidget):
                 oldbox.taken = False
             self.glyphlist[self.active_glyph].box = newbox
             self.go_to_next_glyph() 
+            
+    def zoom_changed(self, value):
+        print 'Value:', value
         
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Space:
