@@ -24,6 +24,7 @@ from gtlib import *
 
 start_dialog = None
 main_win = None
+app = None
 
 def calculate_horizontal_sums(image, show_progress):
     (w, h) = (image.width(), image.height())
@@ -236,11 +237,12 @@ class StartDialog(QWidget):
 class EditorWindow(QWidget):
     def __init__(self, image, font_name, sfd_file, parent=None):
         QWidget.__init__(self)
-        self.resize(640, 400)
         self.active_glyph = 0
         self.glyphlist = []
         self.font_name = font_name
         self.sfd_file = sfd_file
+
+        self.set_nice_windowsize(image)
         
         self.setWindowTitle(program_name + ': ' + font_name)
         
@@ -270,6 +272,18 @@ class EditorWindow(QWidget):
         self.grid.addWidget(self.combo, 1, 0, 1, 1)
         
         self.setLayout(self.grid)
+        
+    def set_nice_windowsize(self, image):
+        global app
+        w = image.width()
+        h = image.height()
+        desk = app.desktop()
+        rect = desk.screenGeometry(desk.primaryScreen())
+        screen_width = rect.width()
+        screen_height = rect.height()
+        final_width = min(0.9*screen_width, w+50)
+        final_height = min(0.9*screen_height, h+100)
+        self.resize(final_width, final_height)
         
     def build_combo(self):
         self.groups = {}
@@ -357,7 +371,7 @@ class EditorWindow(QWidget):
         QMessageBox.information(self, "Success", "Sfd file successfully generated.")
         
 def start_program(arguments):
-    global start_dialog
+    global start_dialog, app
     app = QApplication(arguments)
     if not i_haz_potrace():
         QMessageBox.critical(None, program_name, "Potrace executable not in path, exiting.")
@@ -371,6 +385,7 @@ def start_program(arguments):
     sys.exit(app.exec_())
 
 def test_edwin():
+    global app
     app = QApplication(sys.argv)
     bob = EditorWindow(sys.argv[1], 'temporary_out.sfd', 'MyFont')
     bob.show()
