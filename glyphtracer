@@ -100,9 +100,7 @@ class SelectionArea(QWidget):
         QWidget.__init__(self, parent)
         self.master = master_widget
         self.original_image = image
-        self.zoom = 1
-        self.build_zoom_image()
-        self.resize(self.image.width(), self.image.height())
+        self.set_zoom(1)
         
         strips = calculate_horizontal_sums(self.image, True)
         hor_lines = calculate_cutlines_locations(strips)
@@ -115,6 +113,7 @@ class SelectionArea(QWidget):
     def set_zoom(self, value):
         self.zoom = value
         self.build_zoom_image()
+        self.resize(self.image.width(), self.image.height())
 
     def build_zoom_image(self):
         if self.zoom == 1:
