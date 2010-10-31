@@ -112,12 +112,16 @@ class SelectionArea(QWidget):
         self.selected_brush = QBrush(QColor(0, 0, 0, 127))
         self.active_brush = QBrush(QColor(255, 0, 0, 127))
 
+    def set_zoom(self, value):
+        self.zoom = value
+        self.build_zoom_image()
+
     def build_zoom_image(self):
         if self.zoom == 1:
             self.image = self.original_image
         else:
             w = self.original_image.width()
-            self.image = self.original_image.scaleToWidth(w/self.zoom)
+            self.image = self.original_image.scaledToWidth(w/self.zoom)
 
     def paintEvent(self, event):
         paint = QPainter()
@@ -329,9 +333,6 @@ class EditorWindow(QWidget):
             self.glyphlist[self.active_glyph].box = newbox
             self.go_to_next_glyph() 
             
-    def zoom_changed(self, value):
-        print 'Value:', value
-        
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Space:
             forward = True
@@ -364,6 +365,9 @@ class EditorWindow(QWidget):
         self.area.set_active_box(self.glyphlist[self.active_glyph].box)
         self.area.repaint()
         
+    def zoom_changed(self, value):
+        self.area.set_zoom(value)
+        self.area.repaint()
         
     def set_glyph_info(self):
         g = self.glyphlist[self.active_glyph]
