@@ -126,14 +126,24 @@ class SelectionArea(QWidget):
         pen = QPen(Qt.black, 1, Qt.SolidLine)
         paint.setPen(pen)
         for box in self.boxes:
-            paint.drawRect(box.r)
+            zoomed_box = self.scale_box(box.r)
+            paint.drawRect(zoomed_box)
             if box is self.active_box:
-                paint.fillRect(box.r, self.active_brush)                
+                paint.fillRect(zoomed_box, self.active_brush)                
             elif box.taken:
-                paint.fillRect(box.r, self.selected_brush)
+                paint.fillRect(zoomed_box, self.selected_brush)
         paint.end()
         
-    def find_box(self, x, y):
+    def scale_box(self, box):
+        size = box.size()
+        p = box.topLeft()
+        scaled_size = QSize(size.width()/self.zoom, size.height()/self.zoom)
+        scaled_p = QPoint(p.x()/self.zoom, p.y()/self.zoom)
+        return QRect(scaled_p, scaled_size)
+        
+    def find_box(self, unscaled_x, unscaled_y):
+        x = unscaled_x*self.zoom
+        y = unscaled_y*self.zoom
         for b in self.boxes:
             if b.contains(x, y):
                 return b
