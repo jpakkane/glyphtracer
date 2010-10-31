@@ -99,7 +99,9 @@ class SelectionArea(QWidget):
     def __init__(self, image, master_widget, parent = None):
         QWidget.__init__(self, parent)
         self.master = master_widget
-        self.image = image
+        self.original_image = image
+        self.zoom = 1
+        self.build_zoom_image()
         self.resize(self.image.width(), self.image.height())
         
         strips = calculate_horizontal_sums(self.image, True)
@@ -110,8 +112,14 @@ class SelectionArea(QWidget):
         self.selected_brush = QBrush(QColor(0, 0, 0, 127))
         self.active_brush = QBrush(QColor(255, 0, 0, 127))
 
+    def build_zoom_image(self):
+        if self.zoom == 1:
+            self.image = self.original_image
+        else:
+            w = self.original_image.width()
+            self.image = self.original_image.scaleToWidth(w/self.zoom)
+
     def paintEvent(self, event):
-        w = self.image.width()
         paint = QPainter()
         paint.begin(self)
         paint.drawImage(0, 0, self.image)
@@ -123,7 +131,6 @@ class SelectionArea(QWidget):
                 paint.fillRect(box.r, self.active_brush)                
             elif box.taken:
                 paint.fillRect(box.r, self.selected_brush)
-        #paint.setPen(pen)
         paint.end()
         
     def find_box(self, x, y):
