@@ -1,4 +1,6 @@
-# GLyphtracer
+# Glyphtracer
+
+![A screenshot of Glyphtracer](screenshot.jpg?raw=true "Screenshot")
 
 ## Overview
 
@@ -11,7 +13,7 @@ be finalized with FontForge.
 
 ## Dependencies
 
-Glyphtracer requires PyQt4 and Potrace, which is an image vectorizer.
+Glyphtracer requires PyQt5 and Potrace, which is an image vectorizer.
 
 It has been only tested on Linux. It might work on OSX or Windows.
 It might not.
