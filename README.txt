@@ -1,5 +1,5 @@
 GLyphtracer
-(C) 2010 Jussi Pakkanen
+(C) 2010-2021 Jussi Pakkanen
 https://launchpad.net/glyphtracer
 
 
@@ -29,7 +29,7 @@ The letter recognition is based on white space. Thus every row
 must be separated from other rows by a continuous horizontal strip
 of white. If this is not the case (because, for example, your image
 is tilted), detection will fail. Similarly letters on a single row
-have to be separated by vertical white space. Just give your letters 
+have to be separated by vertical white space. Just give your letters
 lots of "room" on all sides and everything will work.
 
 

@@ -1,8 +1,8 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 #    Glyphtracer
-#    Copyright (C) 2010 Jussi Pakkanen
+#    Copyright (C) 2010-2021 Jussi Pakkanen
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ def calculate_horizontal_sums(image, show_progress):
     if show_progress:
         prog.hide()
     return sums
-    
+
 def calculate_cutlines_locations(sums):
     element_strips = []
     cutoff = 0
-    
+
     if len(sums) == 0:
         return []
     if sums[0] <= cutoff:
@@ -54,7 +54,7 @@ def calculate_cutlines_locations(sums):
     else:
         background_strip = False
     strip_start = 0
-    
+
     for i in xrange(len(sums)):
         if sums[i] <= cutoff:
             background = True
@@ -62,14 +62,14 @@ def calculate_cutlines_locations(sums):
             background = False
         if background == background_strip:
             continue
-        
+
         # We crossed a region.
         if background:
            strip_end = i-1;
            element_strips.append((strip_start, strip_end))
         strip_start = i
         background_strip = background
-          
+
     if strip_start < len(sums) and not background_strip:
         strip_end = len(sums) - 1
         element_strips.append((strip_start, strip_end))
@@ -101,7 +101,7 @@ class SelectionArea(QWidget):
         self.master = master_widget
         self.original_image = image
         self.set_zoom(1)
-        
+
         strips = calculate_horizontal_sums(self.image, True)
         hor_lines = calculate_cutlines_locations(strips)
         self.boxes = calculate_letter_boxes(self.image, hor_lines)
@@ -132,18 +132,18 @@ class SelectionArea(QWidget):
             zoomed_box = self.scale_box(box.r)
             paint.drawRect(zoomed_box)
             if box is self.active_box:
-                paint.fillRect(zoomed_box, self.active_brush)                
+                paint.fillRect(zoomed_box, self.active_brush)
             elif box.taken:
                 paint.fillRect(zoomed_box, self.selected_brush)
         paint.end()
-        
+
     def scale_box(self, box):
         size = box.size()
         p = box.topLeft()
         scaled_size = QSize(size.width()/self.zoom, size.height()/self.zoom)
         scaled_p = QPoint(p.x()/self.zoom, p.y()/self.zoom)
         return QRect(scaled_p, scaled_size)
-        
+
     def find_box(self, unscaled_x, unscaled_y):
         x = unscaled_x*self.zoom
         y = unscaled_y*self.zoom
@@ -151,24 +151,24 @@ class SelectionArea(QWidget):
             if b.contains(x, y):
                 return b
         return None
-    
+
     def set_active_box(self, box):
         self.active_box = box
-        
+
     def take_box(self, box):
         box.taken = True
-    
+
     def mousePressEvent(self, me):
         # I could not figure out how to connect
         # to events in some other widget, so
         # we have this ugly hack.
         self.master.user_click(me)
-            
+
 class StartDialog(QWidget):
     def __init__(self, initial_file_name=None):
         QWidget.__init__(self)
         self.resize(512, 200)
-        
+
         self.grid = QGridLayout()
         self.name_edit = QLineEdit('MyFont')
         self.file_edit = QLineEdit()
@@ -178,7 +178,7 @@ class StartDialog(QWidget):
             self.set_output_file_from_source(initial_file_name)
         self.file_button = QPushButton('Browse')
         self.connect(self.file_button, SIGNAL('clicked()'), self.open_file)
-        
+
         self.grid.setSpacing(10)
         self.grid.addWidget(QLabel('Font name'), 0, 0)
         self.grid.addWidget(self.name_edit, 0, 1, 1, 2)
@@ -187,7 +187,7 @@ class StartDialog(QWidget):
         self.grid.addWidget(self.file_button, 1, 2)
         self.grid.addWidget(QLabel('Output file'), 2, 0)
         self.grid.addWidget(self.output_edit, 2, 1, 1, 2)
-        
+
         hbox = QHBoxLayout()
         about_button = QPushButton('About')
         self.connect(about_button, SIGNAL('clicked()'), self.about_message)
@@ -201,27 +201,27 @@ class StartDialog(QWidget):
         w = QWidget()
         w.setLayout(hbox)
         self.grid.addWidget(w, 3, 0, 1, 3)
-        
+
         self.setLayout(self.grid)
-        
+
     def open_file(self):
         fname = QFileDialog.getOpenFileName(self)
         if fname is not None and fname != '':
             self.file_edit.setText(fname)
             self.set_output_file_from_source(fname)
-    
+
     def set_output_file_from_source(self, name):
         parts = str(name).split('.')
         if len(parts) > 1:
             parts = parts[:-1]
         parts.append('sfd')
         self.output_edit.setText('.'.join(parts))
-    
+
     def about_message(self):
-        QMessageBox.information(self, "About " + program_name, 
+        QMessageBox.information(self, "About " + program_name,
                                 program_name + ' ' + program_version + \
-                                "\n(C) 2010 Jussi Pakkanen.\nThis program is available under the Gnu General Public License v3 or later.")
-    
+                                "\n(C) 2010-2021 Jussi Pakkanen.\nThis program is available under the Gnu General Public License v3 or later.")
+
     def does_file_exist(self, fname):
         try:
             f = file(fname, 'r')
@@ -263,29 +263,29 @@ class EditorWindow(QWidget):
         self.sfd_file = sfd_file
 
         self.set_nice_windowsize(image)
-        
+
         self.setWindowTitle(program_name + ': ' + font_name)
-        
+
         self.grid = QGridLayout()
         self.area = SelectionArea(image, self)
         sa = QScrollArea()
         sa.setWidget(self.area)
         self.grid.addWidget(sa, 0, 0, 1, 6)
-        
+
         b = QPushButton('Previous glyph')
         self.connect(b, SIGNAL('clicked()'), self.previous_button)
         self.grid.addWidget(b, 1, 1, 1, 1)
         b = QPushButton('Next glyph')
         self.connect(b, SIGNAL('clicked()'), self.next_button)
         self.grid.addWidget(b, 1, 2, 1, 1)
-        
+
         self.glyph_text = QLabel('Glyph:')
         self.glyph_text.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         self.grid.addWidget(self.glyph_text, 1, 3, 1, 1)
         self.save = QPushButton('Generate SFD file')
         self.connect(self.save, SIGNAL('clicked()'), self.generate_sfd)
         self.grid.addWidget(self.save, 1, 5, 1, 1)
-        
+
         self.combo = QComboBox()
         self.build_glyph_combo()
         self.connect(self.combo, SIGNAL('activated(int)'), self.glyph_set_changed)
@@ -298,9 +298,9 @@ class EditorWindow(QWidget):
         self.zoomlevel.setPrefix('Zoom level: ')
         self.connect(self.zoomlevel, SIGNAL('valueChanged(int)'), self.zoom_changed)
         self.grid.addWidget(self.zoomlevel, 1, 4, 1, 1)
-        
+
         self.setLayout(self.grid)
-        
+
     def set_nice_windowsize(self, image):
         global app
         w = image.width()
@@ -312,14 +312,14 @@ class EditorWindow(QWidget):
         final_width = min(0.9*screen_width, w+50)
         final_height = min(0.9*screen_height, h+100)
         self.resize(final_width, final_height)
-        
+
     def build_glyph_combo(self):
         self.groups = {}
         for name, glyphs in glyph_groups:
             self.groups[name] = [data_to_glyphinfo(x) for x in glyphs]
             self.combo.addItem(name)
         self.glyph_set_changed(0)
-    
+
     def user_click(self, mouse_event):
         (x, y) = (mouse_event.x(), mouse_event.y())
         newbox = self.area.find_box(x, y)
@@ -330,21 +330,21 @@ class EditorWindow(QWidget):
             if oldbox is not None:
                 oldbox.taken = False
             self.glyphlist[self.active_glyph].box = newbox
-            self.go_to_next_glyph() 
-            
+            self.go_to_next_glyph()
+
     def keyPressEvent(self, key_event):
         if key_event.key() == Qt.Key_Space:
             forward = True
         else:
             forward = False
         self.go_to_next_glyph(forward)
-        
+
     def next_button(self):
         self.go_to_next_glyph(True)
-    
+
     def previous_button(self):
         self.go_to_next_glyph(False)
-        
+
     def go_to_next_glyph(self, forward=True):
         if forward:
             shift = 1
@@ -353,7 +353,7 @@ class EditorWindow(QWidget):
         gs = len(self.glyphlist)
         self.active_glyph = (self.active_glyph + shift + gs) % gs
         self.glyph_info_changed()
-        
+
     def glyph_set_changed(self, i):
         self.active_glyph = 0
         self.glyphlist = self.groups[str(self.combo.currentText())]
@@ -363,17 +363,17 @@ class EditorWindow(QWidget):
         self.set_glyph_info()
         self.area.set_active_box(self.glyphlist[self.active_glyph].box)
         self.area.repaint()
-        
+
     def zoom_changed(self, value):
         self.area.set_zoom(value)
         self.area.repaint()
-        
+
     def set_glyph_info(self):
         g = self.glyphlist[self.active_glyph]
         info_text = u'Glyph %d/%d: %s (%s)' % \
         (self.active_glyph+1, len(self.glyphlist), unicode(g.name), unichr(g.codepoint))
         self.glyph_text.setText(info_text)
-        
+
     def unselect(self, box):
         box.taken = False
         for name in self.groups.keys():
@@ -381,13 +381,13 @@ class EditorWindow(QWidget):
                 if g.box is box:
                     g.box = None
                     return
-        
+
     def get_selected_glyphs(self):
         selected = []
         for name in self.groups.keys():
             selected += filter(lambda x: x.box is not None, self.groups[name])
         return selected
-        
+
     def generate_sfd(self):
         selected = self.get_selected_glyphs()
         if len(selected) == 0:
@@ -398,9 +398,9 @@ class EditorWindow(QWidget):
         except Exception, e:
             QMessageBox.critical(self, "Error", "Sfd generation failed:\n" + str(e))
             return
-            
+
         QMessageBox.information(self, "Success", "Sfd file successfully generated.")
-        
+
 def start_program(arguments):
     global start_dialog, app
     app = QApplication(arguments)
@@ -421,7 +421,7 @@ def test_edwin():
     bob = EditorWindow(sys.argv[1], 'temporary_out.sfd', 'MyFont')
     bob.show()
     sys.exit(app.exec_())
-    
+
 def test_progress():
     import time
     app = QApplication(sys.argv)
@@ -430,7 +430,7 @@ def test_progress():
     for i in xrange(100):
         time.sleep(0.1)
         prog.setValue(i)
-    
+
 if __name__ == "__main__":
     start_program(sys.argv)
     #test_progress()

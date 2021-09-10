@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
 #    Glyphtracer
-#    Copyright (C) 2010 Jussi Pakkanen
+#    Copyright (C) 2010-2021 Jussi Pakkanen
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    This program is distributed in the hope that it will be useful,     
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of      
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
-#                                                                        
+#
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -135,7 +135,7 @@ FullName: %%s
 FamilyName: %%s
 Weight: Medium
 Copyright: Originally traced with %s
-UComments: "No comments" 
+UComments: "No comments"
 Version: 001.000
 ItalicAngle: 0
 UnderlinePosition: -100
@@ -210,7 +210,7 @@ class LetterBox(object):
     def __init__(self, rectangle):
         self.r = rectangle
         self.taken = False
-    
+
     def contains(self, x, y):
         return self.r.contains(x, y)
 
@@ -231,7 +231,6 @@ def data_to_glyphinfo(data):
 
 def integerise(command_line):
     return [int(x) for x in command_line.split()[0:-1]]
-    
 
 def parse_postscript(commands):
     point_sets = []
@@ -277,7 +276,6 @@ def crop_and_trace(image, box):
     points = potrace_image(tempname)
     os.unlink(tempname)
     return points
-    
 
 def convert_points(pointlist):
     pointlist = to_absolute(pointlist)
@@ -360,7 +358,6 @@ def process_glyph(ofile, image, glyph, scale):
             else:
                 raise RuntimeError('Incorrect amount of points: %d' % len(point))
     ofile.write(letter_footer)
-    
 
 def max_y(glyphs):
     """Return the the height of the tallest letter box."""
@@ -379,10 +376,10 @@ def write_sfd(ofilename, fontname, image, glyphs):
     family_name = fontname
     num_letters = len(glyphs)
     scale = calculate_scale(glyphs)
-    
+
     ofile.write(sfd_header % (font_name, full_name, family_name, ascent, descent, num_letters))
 
     for glyph in glyphs:
         process_glyph(ofile, image, glyph, scale)
-    
+
     ofile.write(sfd_footer)
