@@ -3,3 +3,6 @@ MANIFEST
 .pydevproject
 .settings
 dist
+__pycache__
+*.png
+
