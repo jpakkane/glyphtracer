@@ -22,13 +22,22 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 from gtlib import *
+from reportlab.lib.colors import black
 
 start_dialog = None
 main_win = None
 app = None
 
+def detect_black_index(image):
+    colortable = image.colorTable()
+    assert(len(colortable) == 2)
+    if(colortable[0] > colortable[1]):
+        return 1
+    return 0
+
 def calculate_horizontal_sums(image, show_progress):
     (w, h) = (image.width(), image.height())
+    black_index = detect_black_index(image)
     if show_progress:
         prog = QtWidgets.QProgressDialog("Vertical splitting", '', 0, h)
         prog.show()
@@ -36,7 +45,8 @@ def calculate_horizontal_sums(image, show_progress):
     for j in range(h):
         total = 0
         for i in range(w):
-            total += image.pixelIndex(i, j)
+            if image.pixelIndex(i, j) == black_index:
+                total += 1
         sums.append(total)
         if show_progress:
             prog.setValue(j)
@@ -259,8 +269,8 @@ class StartDialog(QtWidgets.QWidget):
         if self.does_file_exist(output):
             if QtWidgets.QMessageBox.critical(self,
                                               "File exists",
-                                              "Output file %s already exists." % output,
-                                              'Overwrite it', 'Select a different file') != 0:
+                                              "Output file %s already exists, overwrite?" % output,
+                                              QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No) == QtWidgets.QMessageBox.No:
                 return
         start_dialog.hide()
         main_win = EditorWindow(image, font_name, output)
@@ -345,7 +355,7 @@ class EditorWindow(QtWidgets.QWidget):
             self.go_to_next_glyph()
 
     def keyPressEvent(self, key_event):
-        if key_event.key() == Qt.Key_Space:
+        if key_event.key() == QtCore.Qt.Key_Space:
             forward = True
         else:
             forward = False

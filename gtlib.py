@@ -343,7 +343,7 @@ def process_glyph(ofile, image, glyph, scale):
         ofile.write(pointlist_to_str(fp, scale))
         ofile.write(" m 0\n")
 
-        for i in xrange(1, len(curve)):
+        for i in range(1, len(curve)):
             point = curve[i]
             ofile.write(' ')
             ofile.write(pointlist_to_str(point, scale))
@@ -366,7 +366,7 @@ def process_glyph(ofile, image, glyph, scale):
 
 def max_y(glyphs):
     """Return the the height of the tallest letter box."""
-    return reduce(lambda x, y: max(x, y.box.r.height()), glyphs, 0)
+    return max([y.box.r.height() for y in  glyphs])
 
 def calculate_scale(glyphs):
     """Calculate multiplier to convert potrace's coordinates
@@ -375,7 +375,7 @@ def calculate_scale(glyphs):
     return highest_y_coordinate/(potrace_pixel_multiplier*highest_box)
 
 def write_sfd(ofilename, fontname, image, glyphs):
-    ofile = file(ofilename, 'w')
+    ofile = open(ofilename, 'w')
     font_name = fontname
     full_name = fontname
     family_name = fontname

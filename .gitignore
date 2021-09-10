@@ -5,4 +5,4 @@ MANIFEST
 dist
 __pycache__
 *.png
-
+*.sfd
