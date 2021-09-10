@@ -21,7 +21,7 @@
 import os, subprocess, tempfile
 
 program_name = 'Glyphtracer'
-program_version = '1.2'
+program_version = '2.0'
 
 def entry_to_upper(e):
     return (e[0].capitalize(), e[1]-32)
@@ -221,7 +221,10 @@ class GlyphInfo(object):
         self.box = None
 
 def i_haz_potrace():
-    p = subprocess.Popen('potrace -h', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(['potrace', '-h'],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         universal_newlines=True)
     p.wait()
     return p.returncode == 0
 
@@ -255,7 +258,9 @@ def parse_postscript(commands):
     return point_sets
 
 def potrace_image(filename):
-    p = subprocess.Popen('potrace -c --eps -q ' + filename + ' -o -', shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen(['potrace', '-c', '--eps', '-q', filename, '-o', '-'],
+                         stdout=subprocess.PIPE,
+                         universal_newlines=True)
     (so, se) = p.communicate()
     lines = so.split('\n')
     while not lines[0].endswith('moveto'):
