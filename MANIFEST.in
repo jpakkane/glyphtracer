@@ -1,2 +1,4 @@
 include license.txt COPYING
-include glyphtracer.desktop
+include com.github.jpakkane.glyphtracer.desktop
+include com.github.jpakkane.glyphtracer.metainfo.xml
+include com.github.jpakkane.glyphtracer.svg
