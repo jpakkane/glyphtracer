@@ -23,6 +23,7 @@ import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 from gtlib import *
 from reportlab.lib.colors import black
+import math
 
 start_dialog = None
 main_win = None
@@ -132,7 +133,7 @@ class SelectionArea(QtWidgets.QWidget):
             self.image = self.original_image
         else:
             w = self.original_image.width()
-            self.image = self.original_image.scaledToWidth(w/self.zoom)
+            self.image = self.original_image.scaledToWidth(round(w/self.zoom))
 
     def paintEvent(self, event):
         paint = QtGui.QPainter()
@@ -331,8 +332,8 @@ class EditorWindow(QtWidgets.QWidget):
         rect = desk.screenGeometry(desk.primaryScreen())
         screen_width = rect.width()
         screen_height = rect.height()
-        final_width = min(0.9*screen_width, w+50)
-        final_height = min(0.9*screen_height, h+100)
+        final_width = math.ceil(min(0.9*screen_width, w+50))
+        final_height = math.ceil(min(0.9*screen_height, h+100))
         self.resize(final_width, final_height)
 
     def build_glyph_combo(self):
